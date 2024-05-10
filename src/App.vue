@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-main>
-      <v-overlay v-if="isLoading" :value="isLoading">
+      <v-overlay v-if="isLoading">
         <v-progress-circular
           indeterminate
           size="64"

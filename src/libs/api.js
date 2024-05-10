@@ -45,3 +45,26 @@ export async function getDutiesSize(params) {
 
   return contract.getDutiesSize(vin)
 }
+
+export async function isExistsCar(params) {
+  const {
+    address,
+    abi,
+    provider,
+    vin
+  } = params
+
+  setTimeout(() => {
+    
+  })
+
+  const contract = new ethers.Contract(address, abi, provider)
+
+  // return contract.isExistsCar(vin)
+
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(contract.isExistsCar(vin))
+    }, 5000)
+  })
+}
