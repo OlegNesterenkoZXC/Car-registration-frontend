@@ -54,10 +54,6 @@ export async function isExistsCar(params) {
     vin
   } = params
 
-  setTimeout(() => {
-    
-  })
-
   const contract = new ethers.Contract(address, abi, provider)
 
   // return contract.isExistsCar(vin)
@@ -65,6 +61,57 @@ export async function isExistsCar(params) {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve(contract.isExistsCar(vin))
-    }, 5000)
+    }, 1500)
+  })
+}
+
+export async function getDuties(params) {
+  const {
+    address,
+    abi,
+    provider,
+    vin
+  } = params
+
+  const contract = new ethers.Contract(address, abi, provider)
+
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(contract.getDuties(vin))
+    }, 1500)
+  })
+}
+
+export async function getAmountDuty (params) {
+  const {
+    address,
+    abi,
+    provider,
+    duty,
+  } = params
+
+  const contract = new ethers.Contract(address, abi, provider)
+
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(contract.dutiesList(duty))
+    }, 1500)
+  })
+}
+
+export async function getTotalAmountDuties(params) {
+  const {
+    address,
+    abi,
+    provider,
+    vin
+  } = params
+
+  const contract = new ethers.Contract(address, abi, provider)
+
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(contract.getAmountDuties(vin))
+    }, 1500)
   })
 }

@@ -81,7 +81,6 @@ export default {
     init () {
       this.initContractAbi()
       this.initProvider()
-      this.initMetMaskProvider()
       this.initContractAddress()
     },
     initContractAbi () {
@@ -133,18 +132,6 @@ export default {
         .finally(() => {
           this.isLoadingContractAddress = false
         })
-    },
-    initMetMaskProvider () {
-      getMetaMaskProvider()
-      .then((provider) => this.metaMaskProvider = provider)
-      .catch((error) => {
-        console.error(error)
-
-        this.error = {
-          type: 'error',
-          text: 'Не удалось подключиться к MetaMask'
-        }
-      })
     }
   },
   mounted() {
