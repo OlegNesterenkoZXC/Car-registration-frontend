@@ -115,3 +115,24 @@ export async function getTotalAmountDuties(params) {
     }, 1500)
   })
 }
+
+export async function payDuties (params) {
+  const {
+    address,
+    signer,
+    abi,
+    provider,
+    vin,
+    amount
+  } = params
+
+  const contract = new ethers.Contract(address, abi, provider)
+
+  const tx = await contract.connect(signer).payDuties(vin, { value: amount })
+
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(tx.wait())
+    }, 1500)
+  })
+}

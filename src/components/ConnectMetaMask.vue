@@ -16,15 +16,17 @@
       <v-spacer></v-spacer>
       <v-btn
         color="primary"
+        :loading="isLoading"
+        :disabled="isLoading"
         text
-        @click="handler"
+        @click="connectHandler"
       >
         Подключиться
       </v-btn>
       <v-btn
         color="error"
         text
-        @click="$emit('close')"
+        @click="closeHandler"
       >
         отмена
       </v-btn>
@@ -37,20 +39,38 @@ import { getMetaMaskProvider as getMetaMaskProviderAPI } from '@/libs/api'
 import { ethers } from 'ethers';
 
 export default {
+  props: {
+    provider: {
+      type: Object,
+      default: null
+    }
+  },
   data () {
     return {
-      provider: null,
+      isLoading: false,
       error: null,
     }
   },
   methods: {
-    handler () {
+    closeHandler () {
+      $emit('close')
+
+      this.isLoading = false
+      this.error = null
+    },
+    connectHandler () {
       this.initMetMaskProvider()
     },
     initMetMaskProvider () {
+      this.isLoading = true;
+
       getMetaMaskProviderAPI()
-      .then((provider) => this.provider = new ethers.BrowserProvider(provider))
-      .then(() => this.provider.getSigner())
+      .then(async (provider) => {
+        const metaMaskProvider = new ethers.BrowserProvider(provider)
+        await metaMaskProvider.getSigner()
+
+        this.$emit('change', metaMaskProvider)
+      })
       .catch((error) => {
         console.error(error)
 
@@ -59,6 +79,7 @@ export default {
           text: 'Не удалось подключиться к MetaMask, проверьте расширение и повторите попытку'
         }
       })
+      .finally(() => this.isLoading = false)
     }
   }
 }

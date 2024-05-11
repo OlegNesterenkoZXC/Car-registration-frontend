@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import MyCar from '@/components/MyCar.vue';
+import MyCar from '@/components/MyCar/MyCar.vue';
 
 
 export default {

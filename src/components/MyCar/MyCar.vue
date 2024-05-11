@@ -10,10 +10,14 @@
             {{ error.text }}
           </v-alert>
         </v-col>
-        <v-col>
+        <v-col v-else>
           <CarCard>
-            <MyDuties :vin="vin" :abi="abi" :provider="provider" :contractAddress="contractAddress" />
-            <MyDuties :vin="vin" :abi="abi" :provider="provider" :contractAddress="contractAddress" />
+            <MyDuties 
+              :vin="vin" 
+              :abi="abi" 
+              :provider="provider" 
+              :contractAddress="contractAddress" 
+            />
           </CarCard>
         </v-col>
       </v-row>
@@ -23,7 +27,7 @@
 
 <script>
 import CarCard from "@/elements/CarCard.vue";
-import MyDuties from "@/components/MyDuties.vue";
+import MyDuties from "./MyDuties/MyDuties.vue"
 
 import { isExistsCar as isExistsCarAPI, getDuties as getDutiesAPI } from '@/libs/api'
 

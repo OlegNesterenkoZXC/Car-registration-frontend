@@ -5,11 +5,11 @@
     </v-expansion-panel-header>
     <v-expansion-panel-content>
       <v-progress-circular 
-        v-if="duties.length === 0"
+        v-if="totalAmount === -1"
         indeterminate size="64" 
       />
       <div
-        v-else
+        v-else-if="totalAmount !== '0.0'"
       >
         <v-list-item 
          v-for="duty, index in duties" :key="index"
@@ -21,13 +21,30 @@
           </v-list-item-content>
         </v-list-item>
 
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title>К оплате: {{ totalAmount }} eth</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <PayDuties />
+        <div v-if="duties.length !== 0">
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>К оплате: {{ totalAmount }} eth</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          
+          <PayDuties 
+            :amount="totalAmount" 
+            :vin="vin" 
+            :abi="abi" 
+            :contractAddress="contractAddress" 
+            @success="init" 
+          />
+        </div>
       </div>
+      <v-alert
+        v-else
+        prominent
+        text
+        type="success"
+      >
+        Все пошлины оплачены
+      </v-alert>
     </v-expansion-panel-content>
   </v-expansion-panel>
 </template>
@@ -67,10 +84,14 @@ export default {
   data () {
     return {
       duties: [],
-      totalAmount: 0
+      totalAmount: -1
     }
   },
   methods: {
+    init () {
+      this.initDuties()
+      this.initTotalAmount()
+    },
     async initDuties () {
       const params = {
         address: this.contractAddress,
@@ -139,8 +160,7 @@ export default {
     }
   },
   mounted () {
-    this.initDuties()
-    this.initTotalAmount()
+    this.init()
   }
 }
 </script>
