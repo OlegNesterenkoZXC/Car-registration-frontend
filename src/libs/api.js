@@ -155,6 +155,40 @@ export async function getInsurancePolices (params) {
   })
 }
 
+export async function getVehiclePassports (params) {
+  const {
+    address,
+    abi,
+    provider,
+    vin
+  } = params
+
+  const contract = new ethers.Contract(address, abi, provider)
+
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(contract.getVehiclePassports(vin))
+    }, 1500)
+  })
+}
+
+export async function getRegistrationDates (params) {
+  const {
+    address,
+    abi,
+    provider,
+    vin
+  } = params
+
+  const contract = new ethers.Contract(address, abi, provider)
+
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(contract.getRegistrationDates(vin))
+    }, 1500)
+  })
+}
+
 export async function getVinInfo (vin) {
   const response = await axios.request({
     method: 'GET',

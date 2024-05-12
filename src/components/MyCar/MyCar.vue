@@ -21,6 +21,18 @@
               :provider="provider" 
               :contractAddress="contractAddress" 
             />
+            <VehiclePassports
+              :vin="vin" 
+              :abi="abi" 
+              :provider="provider" 
+              :contractAddress="contractAddress" 
+            />
+            <RegistrationDates
+              :vin="vin" 
+              :abi="abi" 
+              :provider="provider" 
+              :contractAddress="contractAddress" 
+            />
             <MyDuties 
               :vin="vin" 
               :abi="abi" 
@@ -40,9 +52,11 @@ import MyDuties from "./MyDuties/MyDuties.vue"
 
 import { isExistsCar as isExistsCarAPI, getVinInfo as getVinInfoAPI } from '@/libs/api'
 import InsurancePolices from "./InsurancePolices/InsurancePolices.vue";
+import VehiclePassports from "./VehiclePassports/VehiclePassports.vue";
+import RegistrationDates from "./RegistrationDates/RegistrationDates.vue";
 
 export default {
-  components: { CarCard, MyDuties, InsurancePolices },
+  components: { CarCard, MyDuties, InsurancePolices, VehiclePassports, RegistrationDates },
   props: {
     vin: {
       type: String,

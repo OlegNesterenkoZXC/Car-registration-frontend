@@ -10,7 +10,7 @@ export const DUTIES_DESCRIPTION = {
 
 export const BLOCKCHAIN_URL = 'http://127.0.0.1:8545'
 
-export const CONTRACT_ADDRESS = '0xC469e7aE4aD962c30c7111dc580B4adbc7E914DD'
+export const CONTRACT_ADDRESS = '0x391342f5acAcaaC9DE1dC4eC3E03f2678f7c78F1'
 
 export const CONTRACT_ABI = [
     {
@@ -176,29 +176,6 @@ export const CONTRACT_ABI = [
           "type": "string"
         },
         {
-          "internalType": "string",
-          "name": "_series",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_number",
-          "type": "string"
-        }
-      ],
-      "name": "addInsurancePolices",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_VIN",
-          "type": "string"
-        },
-        {
           "components": [
             {
               "internalType": "string",
@@ -216,7 +193,30 @@ export const CONTRACT_ABI = [
           "type": "tuple"
         }
       ],
-      "name": "addInsurancePolicesS",
+      "name": "addInsurancePolices",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_VIN",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_series",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_number",
+          "type": "string"
+        }
+      ],
+      "name": "addInsurancePolices",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -267,7 +267,7 @@ export const CONTRACT_ABI = [
           "type": "string"
         }
       ],
-      "name": "addVehiclePasport",
+      "name": "addVehiclepassport",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -393,7 +393,7 @@ export const CONTRACT_ABI = [
           "type": "string"
         }
       ],
-      "name": "editVehiclePasport",
+      "name": "editVehiclepassport",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -704,48 +704,9 @@ export const CONTRACT_ABI = [
           "internalType": "string",
           "name": "_VIN",
           "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_index",
-          "type": "uint256"
         }
       ],
-      "name": "getVehiclePasport",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_VIN",
-          "type": "string"
-        }
-      ],
-      "name": "getVehiclePasports",
+      "name": "getVehiclePassports",
       "outputs": [
         {
           "components": [
@@ -765,7 +726,7 @@ export const CONTRACT_ABI = [
               "type": "string"
             }
           ],
-          "internalType": "struct CarRegistrationSystem.VehiclePasport[]",
+          "internalType": "struct CarRegistrationSystem.Vehiclepassport[]",
           "name": "",
           "type": "tuple[]"
         }
@@ -781,12 +742,51 @@ export const CONTRACT_ABI = [
           "type": "string"
         }
       ],
-      "name": "getVehiclePasportsSize",
+      "name": "getVehiclePassportsSize",
       "outputs": [
         {
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_VIN",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getVehiclepassport",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
         }
       ],
       "stateMutability": "view",
@@ -928,7 +928,7 @@ export const CONTRACT_ABI = [
           "type": "uint256"
         }
       ],
-      "name": "removeVehiclePasport",
+      "name": "removeVehiclepassport",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
