@@ -45,7 +45,6 @@
 import { 
   getContractABI, 
   getProvider, 
-  getMetaMaskProvider, 
   getContractAddress 
 } from '@/libs/api'
 

@@ -4,9 +4,9 @@
       Пошлины
     </v-expansion-panel-header>
     <v-expansion-panel-content>
-      <v-progress-circular 
+      <v-progress-linear
         v-if="totalAmount === -1"
-        indeterminate size="64" 
+        indeterminate
       />
       <div
         v-else-if="totalAmount !== '0.0'"
@@ -27,7 +27,7 @@
               <v-list-item-title>К оплате: {{ totalAmount }} eth</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          
+
           <PayDuties 
             :amount="totalAmount" 
             :vin="vin" 

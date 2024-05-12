@@ -11,7 +11,16 @@
           </v-alert>
         </v-col>
         <v-col v-else>
-          <CarCard>
+          <CarCard
+            :carInfo="carInfo"
+            :vin="vin"
+          >
+            <InsurancePolices
+              :vin="vin" 
+              :abi="abi" 
+              :provider="provider" 
+              :contractAddress="contractAddress" 
+            />
             <MyDuties 
               :vin="vin" 
               :abi="abi" 
@@ -29,10 +38,11 @@
 import CarCard from "@/elements/CarCard.vue";
 import MyDuties from "./MyDuties/MyDuties.vue"
 
-import { isExistsCar as isExistsCarAPI, getDuties as getDutiesAPI } from '@/libs/api'
+import { isExistsCar as isExistsCarAPI, getVinInfo as getVinInfoAPI } from '@/libs/api'
+import InsurancePolices from "./InsurancePolices/InsurancePolices.vue";
 
 export default {
-  components: { CarCard, MyDuties },
+  components: { CarCard, MyDuties, InsurancePolices },
   props: {
     vin: {
       type: String,
@@ -54,25 +64,44 @@ export default {
   data () {
     return {
       isLoading: true,
+      carInfo: null,
       error: null
     }
   },
   computed: {
     isValidProps () {
       return this.contractAddress && this.provider && this.abi
-    }
+    },
   },
   watch: {
     isValidProps: {
       immediate: true,
       handler (value) {
+
         if (value) {
-          this.fetchExistingCar()
+          this.init()
         }
       }
     }
   },
   methods: {
+    async init() {
+      const isExistsCar = await this.fetchExistingCar()
+
+
+      if (!isExistsCar) {
+        this.error = {
+          type: 'info',
+          text: 'Не найдено записей по этому VIN',
+        }
+
+        this.isLoading = false
+        return
+      }
+
+      //await this.initVinInfo()
+      
+    },
     async fetchExistingCar () {
       this.isLoading = true
 
@@ -84,14 +113,7 @@ export default {
       }
 
       try {
-        const isExistsCar = await isExistsCarAPI(params)
-
-        if (!isExistsCar) {
-          this.error = {
-            type: 'info',
-            text: 'Не найдено записей по этому VIN',
-          }
-        }
+        return isExistsCarAPI(params)
       } catch (error) {
         console.error(error)
 
@@ -103,6 +125,13 @@ export default {
         this.isLoading = false
       }
     },
+    async initVinInfo() {
+      try {
+        this.carInfo = await getVinInfoAPI(this.vin)
+      } catch (error) {
+        
+      }
+    }
   },
 }
 </script>

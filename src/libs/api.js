@@ -1,4 +1,5 @@
 import { ethers } from "ethers"
+import axios from "axios";
 import detectEthereumProvider from "@metamask/detect-provider";
 
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/constants"
@@ -135,4 +136,33 @@ export async function payDuties (params) {
       resolve(tx.wait())
     }, 1500)
   })
+}
+
+export async function getInsurancePolices (params) {
+  const {
+    address,
+    abi,
+    provider,
+    vin
+  } = params
+
+  const contract = new ethers.Contract(address, abi, provider)
+
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(contract.getInsurancePolices(vin))
+    }, 1500)
+  })
+}
+
+export async function getVinInfo (vin) {
+  const response = await axios.request({
+    method: 'GET',
+    url: `https://auto.dev/api/vin/${vin}`,
+    params: {
+      apikey: 'ZrQEPSkKb2xlZ2lrbmVzdGVyQGdtYWlsLmNvbQ=='
+    }
+  })
+
+  return response.data
 }

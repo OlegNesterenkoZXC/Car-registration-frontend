@@ -79,7 +79,7 @@ export default {
     }
   },
   methods: {
-     handler() {
+    handler () {
       this.fetchExistingCar()
     },
     async fetchExistingCar () {
@@ -105,6 +105,10 @@ export default {
             text: 'Не найдено записей по этому VIN',
           }
         }
+
+        this.$router.push({
+          path: `/car/${params.vin}`
+        })
       } catch (error) {
         console.error(error)
 
