@@ -53,7 +53,7 @@ export default {
   },
   methods: {
     closeHandler () {
-      $emit('close')
+      this.$emit('close')
 
       this.isLoading = false
       this.error = null

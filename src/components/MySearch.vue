@@ -104,6 +104,8 @@ export default {
             type: 'info',
             text: 'Не найдено записей по этому VIN',
           }
+
+          return
         }
 
         this.$router.push({

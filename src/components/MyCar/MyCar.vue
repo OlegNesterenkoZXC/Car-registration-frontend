@@ -99,26 +99,47 @@ export default {
     }
   },
   methods: {
-    async init() {
-      const isExistsCar = await this.fetchExistingCar()
-
-
-      if (!isExistsCar) {
-        this.error = {
-          type: 'info',
-          text: 'Не найдено записей по этому VIN',
-        }
-
-        this.isLoading = false
-        return
-      }
-
-      //await this.initVinInfo()
-      
-    },
-    async fetchExistingCar () {
+    init() {
       this.isLoading = true
 
+      this.fetchExistingCar()
+        .then((isExistsCar) => {
+          if (!isExistsCar) {
+            throw Error('Car is not exists')
+          }
+
+          this.isLoading = false 
+        })
+        .then(() => this.initVinInfo())
+        .catch((error) => {
+          console.error(error);
+
+          this.error = {
+            type: 'info',
+            text: 'Не найдено записей по этому VIN',
+          }
+        })
+        .finally(() => {
+          this.isLoading = false  
+        })
+
+      // this.isLoading = true
+      // const isExistsCar = await this.fetchExistingCar()
+
+      // if (!isExistsCar) {
+      //   this.error = {
+      //     type: 'info',
+      //     text: 'Не найдено записей по этому VIN',
+      //   }
+
+      //   return
+      // } else {
+      //   await this.initVinInfo()
+      // }
+
+      // this.isLoading = false      
+    },
+    async fetchExistingCar () {
       const params = {
         address: this.contractAddress,
         abi: this.abi,
@@ -135,8 +156,6 @@ export default {
           type: 'error',
           text: 'Не удалось получить запись',
         }
-      } finally {
-        this.isLoading = false
       }
     },
     async initVinInfo() {

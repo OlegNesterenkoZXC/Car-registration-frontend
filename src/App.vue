@@ -3,7 +3,7 @@
     <v-app-bar color="deep-purple" dark app>
 			<v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
 
-			<v-toolbar-title>Система регистрации автомобилей</v-toolbar-title>
+			<v-toolbar-title>Система учёта автомобилей</v-toolbar-title>
 			<v-spacer></v-spacer>
 		</v-app-bar>
 

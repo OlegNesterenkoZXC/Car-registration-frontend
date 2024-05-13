@@ -10,7 +10,7 @@ export const DUTIES_DESCRIPTION = {
 
 export const BLOCKCHAIN_URL = 'http://127.0.0.1:8545'
 
-export const CONTRACT_ADDRESS = '0x391342f5acAcaaC9DE1dC4eC3E03f2678f7c78F1'
+export const CONTRACT_ADDRESS = '0x40bde52e6B80Ae11F34C58c14E1E7fE1f9c834C4'
 
 export const CONTRACT_ABI = [
     {
