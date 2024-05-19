@@ -33,7 +33,7 @@
             :vin="vin" 
             :abi="abi" 
             :contractAddress="contractAddress" 
-            @success="init" 
+            @success="refreshData" 
           />
         </div>
       </div>
@@ -51,7 +51,7 @@
 
 <script>
 import { 
-  getDuties as getDutiesAPI, 
+  getCarDuties as getCarDutiesAPI, 
   getAmountDuty as getAmountDutyAPI, 
   getTotalAmountDuties as getTotalAmountAPI 
 } from '@/libs/api'
@@ -92,6 +92,12 @@ export default {
       this.initDuties()
       this.initTotalAmount()
     },
+    refreshData () {
+      this.duties = []
+      this.totalAmount = -1
+
+      this.init()
+    },
     async initDuties () {
       const params = {
         address: this.contractAddress,
@@ -101,7 +107,7 @@ export default {
       }
 
       try {
-        const dutiesArray = await getDutiesAPI(params)
+        const dutiesArray = await getCarDutiesAPI(params)
 
         dutiesArray.forEach((duty) => {
           this.pushDuty(duty)

@@ -50,8 +50,8 @@
 import CarCard from "@/elements/CarCard.vue";
 import MyDuties from "./MyDuties/MyDuties.vue"
 
-import { isExistsCar as isExistsCarAPI, getVinInfo as getVinInfoAPI } from '@/libs/api'
-import InsurancePolices from "./InsurancePolices/InsurancePolices.vue";
+import { isExistCar as isExistsCarAPI, getVinInfo as getVinInfoAPI } from '@/libs/api'
+import InsurancePolices from "@/components/MyCar/InsurancePolicies/InsurancePolicies.vue";
 import VehiclePassports from "./VehiclePassports/VehiclePassports.vue";
 import RegistrationDates from "./RegistrationDates/RegistrationDates.vue";
 

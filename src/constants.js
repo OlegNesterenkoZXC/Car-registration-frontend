@@ -5,12 +5,12 @@ export const DUTIES_DESCRIPTION = {
   MOTORCYCLE_LICENSE_PLATES: 'Выдача номерных знаков на мотоцикл',
   VEHICLE_REGISTRATION_CERTIFICATE: 'СТС',
   CHANGE_PASSPORT_VEHICLE: 'Внесение изменений в ПТС',
-  ISSUANCE_VEHICLE_PASSPORT: 'Выдача нового ПТС'
+  ISSUANCE_VEHICLE_PASSPORT: 'Выдача нового ПТС',
 }
 
 export const BLOCKCHAIN_URL = 'http://127.0.0.1:8545'
 
-export const CONTRACT_ADDRESS = '0x40bde52e6B80Ae11F34C58c14E1E7fE1f9c834C4'
+export const CONTRACT_ADDRESS = '0x5095d3313C76E8d29163e40a0223A5816a8037D8'
 
 export const CONTRACT_ABI = [
     {
@@ -139,7 +139,7 @@ export const CONTRACT_ABI = [
     },
     {
       "inputs": [],
-      "name": "VALIDATOR_ROLE",
+      "name": "EDITOR_ROLE",
       "outputs": [
         {
           "internalType": "bytes32",
@@ -189,11 +189,11 @@ export const CONTRACT_ABI = [
             }
           ],
           "internalType": "struct CarRegistrationSystem.InsurancePolicy",
-          "name": "insurancePolice",
+          "name": "_insurancePolicy",
           "type": "tuple"
         }
       ],
-      "name": "addInsurancePolices",
+      "name": "addInsurancePolicy",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -206,37 +206,21 @@ export const CONTRACT_ABI = [
           "type": "string"
         },
         {
-          "internalType": "string",
-          "name": "_series",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_number",
-          "type": "string"
-        }
-      ],
-      "name": "addInsurancePolices",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_VIN",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_start",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_end",
-          "type": "uint256"
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "start",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "end",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct CarRegistrationSystem.RegistrationDate",
+          "name": "_registrationDate",
+          "type": "tuple"
         }
       ],
       "name": "addRegistrationDate",
@@ -252,22 +236,29 @@ export const CONTRACT_ABI = [
           "type": "string"
         },
         {
-          "internalType": "string",
-          "name": "_region",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_series",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_number",
-          "type": "string"
+          "components": [
+            {
+              "internalType": "string",
+              "name": "region",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "series",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "number",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct CarRegistrationSystem.VehiclePassport",
+          "name": "_vehiclePassport",
+          "type": "tuple"
         }
       ],
-      "name": "addVehiclepassport",
+      "name": "addVehiclePassport",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -322,17 +313,24 @@ export const CONTRACT_ABI = [
           "type": "uint256"
         },
         {
-          "internalType": "string",
-          "name": "_series",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_number",
-          "type": "string"
+          "components": [
+            {
+              "internalType": "string",
+              "name": "series",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "number",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct CarRegistrationSystem.InsurancePolicy",
+          "name": "_insurancePolicy",
+          "type": "tuple"
         }
       ],
-      "name": "editInsurancePolices",
+      "name": "editInsurancePolicy",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -350,14 +348,21 @@ export const CONTRACT_ABI = [
           "type": "uint256"
         },
         {
-          "internalType": "uint256",
-          "name": "_start",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_end",
-          "type": "uint256"
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "start",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "end",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct CarRegistrationSystem.RegistrationDate",
+          "name": "_registrationDate",
+          "type": "tuple"
         }
       ],
       "name": "editRegistrationDate",
@@ -378,22 +383,29 @@ export const CONTRACT_ABI = [
           "type": "uint256"
         },
         {
-          "internalType": "string",
-          "name": "_region",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_series",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "_number",
-          "type": "string"
+          "components": [
+            {
+              "internalType": "string",
+              "name": "region",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "series",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "number",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct CarRegistrationSystem.VehiclePassport",
+          "name": "_vehiclePassport",
+          "type": "tuple"
         }
       ],
-      "name": "editVehiclepassport",
+      "name": "editVehiclePassport",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -418,19 +430,6 @@ export const CONTRACT_ABI = [
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "getBalance",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
           "internalType": "string",
@@ -438,7 +437,7 @@ export const CONTRACT_ABI = [
           "type": "string"
         }
       ],
-      "name": "getDuties",
+      "name": "getCarDuties",
       "outputs": [
         {
           "internalType": "string[]",
@@ -457,7 +456,7 @@ export const CONTRACT_ABI = [
           "type": "string"
         }
       ],
-      "name": "getDutiesSize",
+      "name": "getCarDutiesSize",
       "outputs": [
         {
           "internalType": "uint256",
@@ -474,43 +473,9 @@ export const CONTRACT_ABI = [
           "internalType": "string",
           "name": "_VIN",
           "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_index",
-          "type": "uint256"
         }
       ],
-      "name": "getInsurancePolice",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_VIN",
-          "type": "string"
-        }
-      ],
-      "name": "getInsurancePolices",
+      "name": "getInsurancePolicies",
       "outputs": [
         {
           "components": [
@@ -541,7 +506,7 @@ export const CONTRACT_ABI = [
           "type": "string"
         }
       ],
-      "name": "getInsurancePolicesSize",
+      "name": "getInsurancePoliciesSize",
       "outputs": [
         {
           "internalType": "uint256",
@@ -565,22 +530,60 @@ export const CONTRACT_ABI = [
           "type": "uint256"
         }
       ],
-      "name": "getRegistrationDate",
+      "name": "getInsurancePolicy",
       "outputs": [
         {
-          "internalType": "string",
+          "components": [
+            {
+              "internalType": "string",
+              "name": "series",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "number",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct CarRegistrationSystem.InsurancePolicy",
           "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_VIN",
           "type": "string"
         },
         {
           "internalType": "uint256",
-          "name": "",
+          "name": "_index",
           "type": "uint256"
-        },
+        }
+      ],
+      "name": "getRegistrationDate",
+      "outputs": [
         {
-          "internalType": "uint256",
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "start",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "end",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct CarRegistrationSystem.RegistrationDate",
           "name": "",
-          "type": "uint256"
+          "type": "tuple"
         }
       ],
       "stateMutability": "view",
@@ -609,7 +612,7 @@ export const CONTRACT_ABI = [
               "type": "uint256"
             }
           ],
-          "internalType": "struct CarRegistrationSystem.RegistrtionDate[]",
+          "internalType": "struct CarRegistrationSystem.RegistrationDate[]",
           "name": "",
           "type": "tuple[]"
         }
@@ -704,6 +707,47 @@ export const CONTRACT_ABI = [
           "internalType": "string",
           "name": "_VIN",
           "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getVehiclePassport",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "region",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "series",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "number",
+              "type": "string"
+            }
+          ],
+          "internalType": "struct CarRegistrationSystem.VehiclePassport",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_VIN",
+          "type": "string"
         }
       ],
       "name": "getVehiclePassports",
@@ -726,7 +770,7 @@ export const CONTRACT_ABI = [
               "type": "string"
             }
           ],
-          "internalType": "struct CarRegistrationSystem.Vehiclepassport[]",
+          "internalType": "struct CarRegistrationSystem.VehiclePassport[]",
           "name": "",
           "type": "tuple[]"
         }
@@ -748,45 +792,6 @@ export const CONTRACT_ABI = [
           "internalType": "uint256",
           "name": "",
           "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "_VIN",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_index",
-          "type": "uint256"
-        }
-      ],
-      "name": "getVehiclepassport",
-      "outputs": [
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
         }
       ],
       "stateMutability": "view",
@@ -842,7 +847,7 @@ export const CONTRACT_ABI = [
           "type": "string"
         }
       ],
-      "name": "isExistsCar",
+      "name": "isExistCar",
       "outputs": [
         {
           "internalType": "bool",
@@ -861,7 +866,7 @@ export const CONTRACT_ABI = [
           "type": "string"
         }
       ],
-      "name": "payDuties",
+      "name": "payCarDuties",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -892,7 +897,7 @@ export const CONTRACT_ABI = [
           "type": "uint256"
         }
       ],
-      "name": "removeInsurancePolices",
+      "name": "removeInsurancePolicy",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -928,7 +933,7 @@ export const CONTRACT_ABI = [
           "type": "uint256"
         }
       ],
-      "name": "removeVehiclepassport",
+      "name": "removeVehiclePassport",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -992,4 +997,4 @@ export const CONTRACT_ABI = [
       "stateMutability": "payable",
       "type": "receive"
     }
-]
+  ]

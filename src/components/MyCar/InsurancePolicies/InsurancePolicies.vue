@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { getInsurancePolices as getInsurancePolicesAPI } from '@/libs/api'
+import { getInsurancePolicies as getInsurancePoliciesAPI } from '@/libs/api'
 
 export default {
   props: {
@@ -78,7 +78,7 @@ export default {
       }
 
       try {
-        const insurancePolicesArray = await getInsurancePolicesAPI(params)
+        const insurancePolicesArray = await getInsurancePoliciesAPI(params)
 
         if (insurancePolicesArray.length === 0) {
           this.error = {

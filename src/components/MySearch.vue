@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { isExistsCar as isExistsCarAPI } from '@/libs/api'
+import { isExistCar as isExistCarAPI } from '@/libs/api'
 import { VIN_REGEXP } from '@/constants'
 
 export default {
@@ -97,7 +97,7 @@ export default {
       }
 
       try {
-        const isExistsCar = await isExistsCarAPI(params)
+        const isExistsCar = await isExistCarAPI(params)
 
         if (!isExistsCar) {
           this.error = {

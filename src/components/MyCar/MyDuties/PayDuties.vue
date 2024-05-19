@@ -64,9 +64,9 @@
 </template>
 
 <script>
-import { payDuties as payDutiesAPI } from '@/libs/api';
+import { payCarDuties as payCarDutiesAPI } from '@/libs/api';
 
-import ConnectMetaMask from '../../ConnectMetaMask.vue';
+import ConnectMetaMask from '@/components/ConnectMetaMask.vue';
 import { parseEther } from 'ethers';
 
 export default {
@@ -122,7 +122,7 @@ export default {
       }
 
       try {
-        await payDutiesAPI (params)
+        await payCarDutiesAPI (params)
         this.dialog = false
 
         this.$emit('success')
