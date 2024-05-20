@@ -48,17 +48,9 @@ export async function isExistCar(params) {
     vin
   } = params
 
-  try {
-    const contract = new ethers.Contract(address, abi, provider)
+  const contract = new ethers.Contract(address, abi, provider)
 
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(contract.isExistCar(vin))
-      }, 1500)
-    })
-  } catch (error) {
-    console.error(error)
-  }
+  return contract.isExistCar(vin)
 }
 
 export async function getCarDuties(params) {
@@ -69,18 +61,11 @@ export async function getCarDuties(params) {
     vin
   } = params
 
-  try {
-    const contract = new ethers.Contract(address, abi, provider)
+  const contract = new ethers.Contract(address, abi, provider)
 
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(contract.getCarDuties(vin))
-      }, 1500)
-    })
-  } catch (error) {
-    console.error(error)
-  }
+  return contract.getCarDuties(vin)
 }
+
 
 export async function getAmountDuty (params) {
   const {
@@ -92,11 +77,7 @@ export async function getAmountDuty (params) {
 
   const contract = new ethers.Contract(address, abi, provider)
 
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(contract.dutiesAmount(duty))
-    }, 1500)
-  })
+  return contract.dutiesAmount(duty)
 }
 
 export async function getTotalAmountDuties(params) {
@@ -109,11 +90,7 @@ export async function getTotalAmountDuties(params) {
 
   const contract = new ethers.Contract(address, abi, provider)
 
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(contract.getAmountDuties(vin))
-    }, 1500)
-  })
+  return contract.getAmountDuties(vin)
 }
 
 export async function payCarDuties (params) {
@@ -125,20 +102,12 @@ export async function payCarDuties (params) {
     vin,
     amount
   } = params
-
-  try {
-    const contract = new ethers.Contract(address, abi, provider)
-
-    const tx = await contract.connect(signer).payCarDuties(vin, { value: amount })
-
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(tx.wait())
-      }, 1500)
-    })
-  } catch (error) {
-    console.error(error);
-  }
+  
+  const contract = new ethers.Contract(address, abi, provider)
+  
+  const tx = await contract.connect(signer).payCarDuties(vin, { value: amount })
+  
+  return tx.wait()
 }
 
 export async function getInsurancePolicies (params) {
@@ -149,17 +118,9 @@ export async function getInsurancePolicies (params) {
     vin
   } = params
 
-  try {
-    const contract = new ethers.Contract(address, abi, provider)
+  const contract = new ethers.Contract(address, abi, provider)
 
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(contract.getInsurancePolicies(vin))
-      }, 1500)
-    })
-  } catch (error) {
-    console.error(error)
-  }
+  return contract.getInsurancePolicies(vin)
 }
 
 export async function getVehiclePassports (params) {
@@ -172,11 +133,7 @@ export async function getVehiclePassports (params) {
 
   const contract = new ethers.Contract(address, abi, provider)
 
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(contract.getVehiclePassports(vin))
-    }, 1500)
-  })
+  return contract.getVehiclePassports(vin)
 }
 
 export async function getRegistrationDates (params) {
@@ -189,11 +146,7 @@ export async function getRegistrationDates (params) {
 
   const contract = new ethers.Contract(address, abi, provider)
 
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(contract.getRegistrationDates(vin))
-    }, 1500)
-  })
+  return contract.getRegistrationDates(vin)
 }
 
 export async function getVinInfo (vin) {
