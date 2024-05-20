@@ -2,26 +2,19 @@ import { ethers } from "ethers"
 import axios from "axios";
 import detectEthereumProvider from "@metamask/detect-provider";
 
-import { CONTRACT_ABI, CONTRACT_ADDRESS } from "@/constants"
+import { BLOCKCHAIN_URL, CONTRACT_INFO_URL } from "@/constants"
 
-export async function getContractABI () {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(CONTRACT_ABI)
-    }, 1500);
+export async function getContractInfo () {
+  const response = await axios.request({
+    method: "GET",
+    url: CONTRACT_INFO_URL
   })
+
+  return response.data
 }
 
-export async function getContractAddress() {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(CONTRACT_ADDRESS)
-    }, 1500);
-  })
-}
-
-export function getProvider (url) {
-  return new ethers.JsonRpcProvider(url)
+export function getProvider () {
+  return new ethers.JsonRpcProvider(BLOCKCHAIN_URL)
 }
 
 export async function getMetaMaskProvider () {
@@ -101,7 +94,7 @@ export async function getAmountDuty (params) {
 
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      resolve(contract.dutiesList(duty))
+      resolve(contract.dutiesAmount(duty))
     }, 1500)
   })
 }

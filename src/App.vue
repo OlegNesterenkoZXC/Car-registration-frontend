@@ -62,21 +62,16 @@
 
 <script>
 import { 
-  getContractABI, 
-  getProvider, 
-  getContractAddress 
+  getContractInfo as getContractInfoAPI,
+  getProvider as getProviderAPI,
 } from '@/libs/api'
-
-import { BLOCKCHAIN_URL } from './constants';
 
 export default {
   name: 'App',
-
   data: () => {
     return {
-      isLoadingContractAbi: true,
+      isLoadingContractInfo: false,
       isLoadingProvider: true,
-      isLoadingContractAddress: true,
       abi: null,
       provider: null,
       metaMaskProvider: null,
@@ -88,8 +83,7 @@ export default {
   },
   computed: {
     isLoading () {
-      return this.isLoadingContractAbi || 
-        this.isLoadingContractAbi || this.isLoadingProvider
+      return this.isLoadingContractInfo || this.isLoadingProvider
     }
   },
   methods: {
@@ -99,32 +93,34 @@ export default {
       this.init()
     },
     init () {
-      this.initContractAbi()
       this.initProvider()
-      this.initContractAddress()
+      this.initContractInfo()
     },
-    initContractAbi () {
-      this.isLoadingContractAbi = true
-
-      getContractABI()
-        .then((abi) => (this.abi = abi))
-        .catch((err) => {
-          console.error(err)
+    initContractInfo () {
+      this.isLoadingContractInfo = true
+      
+      getContractInfoAPI()
+        .then((data) => {
+          this.contractAddress = data.address
+          this.abi = data.abi
+        })
+        .catch((error) => {
+          console.error(error)
 
           this.error = {
             type: 'error',
-            text: 'Не удалось получить ABI контракта'
+            text: 'Не удалось получить информацию о контракте'
           }
         })
         .finally(() => {
-          this.isLoadingContractAbi = false
+          this.isLoadingContractInfo = false
         })
     },
     initProvider () {
       this.isLoadingProvider = true
 
       try {
-        this.provider = getProvider(BLOCKCHAIN_URL)
+        this.provider = getProviderAPI()
       } catch (error) {
         console.error(error);
 
@@ -136,23 +132,6 @@ export default {
         this.isLoadingProvider = false
       }
     },
-    initContractAddress () {
-      this.isLoadingContractAddress = true
-
-      getContractAddress()
-        .then((address) => this.contractAddress = address)
-        .catch((error) => {
-          console.error(error);
-
-          this.error = {
-            type: 'error',
-            text: 'Не удалось подключиться к контракту'
-          }
-        })
-        .finally(() => {
-          this.isLoadingContractAddress = false
-        })
-    }
   },
   mounted() {
     this.init()
