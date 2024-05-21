@@ -13,14 +13,11 @@
       <v-progress-linear indeterminate />
     </v-card-text>
     <v-card-text>
-      <v-expansion-panels>
-        <slot>
-
-        </slot>
-      </v-expansion-panels>
+      <v-card>
+        <slot></slot>
+      </v-card>
     </v-card-text>
   </v-card>
-
 </template>
 
 <script>
