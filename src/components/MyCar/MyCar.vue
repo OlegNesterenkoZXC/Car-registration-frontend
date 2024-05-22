@@ -15,30 +15,32 @@
             :carInfo="carInfo"
             :vin="vin"
           >
-            <InsurancePolices
-              :vin="vin" 
-              :abi="abi" 
-              :provider="provider" 
-              :contractAddress="contractAddress" 
-            />
-            <VehiclePassports
-              :vin="vin" 
-              :abi="abi" 
-              :provider="provider" 
-              :contractAddress="contractAddress" 
-            />
-            <RegistrationDates
-              :vin="vin" 
-              :abi="abi" 
-              :provider="provider" 
-              :contractAddress="contractAddress" 
-            />
-            <MyDuties 
-              :vin="vin" 
-              :abi="abi" 
-              :provider="provider" 
-              :contractAddress="contractAddress" 
-            />
+            <v-list nav>
+              <InsurancePolices
+                :vin="vin" 
+                :abi="abi" 
+                :provider="provider" 
+                :contractAddress="contractAddress" 
+              />
+              <VehiclePassports
+                :vin="vin" 
+                :abi="abi" 
+                :provider="provider" 
+                :contractAddress="contractAddress" 
+              />
+              <RegistrationDates
+                :vin="vin" 
+                :abi="abi" 
+                :provider="provider" 
+                :contractAddress="contractAddress" 
+              />
+              <MyDuties 
+                :vin="vin" 
+                :abi="abi" 
+                :provider="provider" 
+                :contractAddress="contractAddress" 
+              />
+            </v-list>
           </CarCard>
         </v-col>
       </v-row>
@@ -47,7 +49,7 @@
 </template>
 
 <script>
-import CarCard from "@/elements/CarCard.vue";
+import CarCard from "@/components/elements/CarCard.vue";
 import MyDuties from "./MyDuties/MyDuties.vue"
 
 import { isExistCar as isExistsCarAPI, getVinInfo as getVinInfoAPI } from '@/libs/api'

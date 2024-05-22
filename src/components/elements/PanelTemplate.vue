@@ -10,6 +10,9 @@
       v-if="loading"
       indeterminate
     />
+
+    <slot name="alert" />
+
     <v-alert
       v-if="error"
       prominent
@@ -18,8 +21,9 @@
     >
       {{ error.text }}
     </v-alert>
+
     <slot v-else />
-</v-list-group>
+  </v-list-group>
 </template>
 
 <script>

@@ -1,52 +1,47 @@
 <template>
-  <v-expansion-panel>
-    <v-expansion-panel-header>
-      Пошлины
-    </v-expansion-panel-header>
-    <v-expansion-panel-content>
-      <v-progress-linear
-        v-if="totalAmount === -1"
-        indeterminate
-      />
-      <div
-        v-else-if="totalAmount !== '0.0'"
-      >
-        <v-list-item 
-         v-for="duty, index in duties" :key="index"
-          two-line
+  <PanelTemplate 
+    v-if="true"
+    title="Пошлины"
+    :error="error"
+    :loading="false"
+  >
+    <ListItems
+      title="Пошлина"
+      :items="dutiesListItems"
+      @add="addHandler"
+      @edit="editHandler"
+      @remove="removeHandler"
+    >
+      <template #actions>
+        <PayDuties 
+          :amount="totalAmount" 
+          :vin="vin" 
+          :abi="abi" 
+          :contractAddress="contractAddress" 
+          @success="refreshData" 
+        />
+        <v-btn
+          fab
+          small
+          class="ma-4" 
+          color="primary"
+          @click="addHandler"
         >
-          <v-list-item-content>
-            <v-list-item-title>{{ duty.name }}</v-list-item-title>
-            <v-list-item-subtitle>{{ duty.amount }} eth</v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+      </template>
+    </ListItems>
 
-        <div v-if="duties.length !== 0">
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>К оплате: {{ totalAmount }} eth</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-
-          <PayDuties 
-            :amount="totalAmount" 
-            :vin="vin" 
-            :abi="abi" 
-            :contractAddress="contractAddress" 
-            @success="refreshData" 
-          />
-        </div>
-      </div>
+    <template #alert>
       <v-alert
-        v-else
         prominent
         text
         type="success"
       >
         Все пошлины оплачены
       </v-alert>
-    </v-expansion-panel-content>
-  </v-expansion-panel>
+    </template>
+  </PanelTemplate>
 </template>
 
 <script>
@@ -60,9 +55,11 @@ import { formatEther } from 'ethers'
 import { DUTIES_DESCRIPTION } from '@/constants'
 
 import PayDuties from './PayDuties.vue'
+import PanelTemplate from '@/components/elements/PanelTemplate.vue';
+import ListItems from '@/components/elements/ListItems.vue';
 
 export default {
-  components: { PayDuties },
+  components: { PayDuties, PanelTemplate, ListItems },
   props: {
     vin: {
       type: String,
@@ -84,13 +81,44 @@ export default {
   data () {
     return {
       duties: [],
-      totalAmount: -1
+      totalAmount: -1,
+      error: null
+    }
+  },
+  computed: {
+    dutiesListItems () {
+      const duties = this.duties.map((duty) => {
+        const items = []
+        if (duty.name) {
+          items.push(duty.name)
+        }
+        if (duty.amount) {
+          items.push(duty.amount)
+        }
+
+        return { subtitles: items }
+      })
+
+      duties.push({ subtitles: [
+        `Всего: ${this.totalAmount} eth`
+      ]})
+
+      return duties
     }
   },
   methods: {
     init () {
       this.initDuties()
       this.initTotalAmount()
+    },
+    addHandler () {
+      console.log('add event');
+    },
+    editHandler (index) {
+      console.log('edit event', index);
+    },
+    removeHandler (index) {
+      console.log('remove event', index);
     },
     refreshData () {
       this.duties = []

@@ -1,5 +1,31 @@
 <template>
-  <v-expansion-panel>
+  <PanelTemplate
+    v-if="true"
+    title="Паспорта транспортного средства"
+    :error="error"
+    :loading="isLoading"
+  >
+    <ListItems
+      title="Регистрация"
+      :items="vehiclePassportsListItems"
+      @add="addHandler"
+      @edit="editHandler"
+      @remove="removeHandler"
+    >
+      <template #actions>
+        <v-btn
+          fab
+          small
+          class="ma-4" 
+          color="primary"
+          @click="addHandler"
+        >
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+      </template>
+    </ListItems>
+  </PanelTemplate>
+  <v-list-group v-else>
     <v-expansion-panel-header>
       Паспорта транспортного средства
     </v-expansion-panel-header>
@@ -32,13 +58,16 @@
         {{ error.text }}
       </v-alert>
     </v-expansion-panel-content>
-  </v-expansion-panel>
+  </v-list-group>
 </template>
 
 <script>
+import ListItems from '@/components/elements/ListItems.vue';
+import PanelTemplate from '@/components/elements/PanelTemplate.vue';
 import { getVehiclePassports as getVehiclePassportsAPI } from '@/libs/api'
 
 export default {
+  components: { PanelTemplate, ListItems },
   props: {
     vin: {
       type: String,
@@ -64,9 +93,37 @@ export default {
       error: null,
     }
   },
+  computed: {
+    vehiclePassportsListItems () {
+      return this.vehiclePassports.map((vehiclePassport) => {
+        const items = []
+
+        if(vehiclePassport.region) {
+          items.push(`Регион: ${vehiclePassport.region}`)
+        }
+        if(vehiclePassport.series) {
+          items.push(`Серия: ${vehiclePassport.series}`)
+        }
+        if(vehiclePassport.number) {
+          items.push(`Номер: ${vehiclePassport.number}`)
+        }
+
+        return { subtitles: items }
+      })
+    }
+  },
   methods: {
     init () {
       this.initVehiclePassports()
+    },
+    addHandler () {
+      console.log('add event');
+    },
+    editHandler (index) {
+      console.log('edit event', index);
+    },
+    removeHandler (index) {
+      console.log('remove event', index);
     },
     async initVehiclePassports () {
       this.isLoading = true
@@ -108,7 +165,7 @@ export default {
       }
     }
   },
-  mounted () {
+  created () {
     this.init()
   }
 }

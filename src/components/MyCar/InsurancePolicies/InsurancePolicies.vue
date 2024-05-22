@@ -1,43 +1,40 @@
 <template>
-  <v-expansion-panel>
-    <v-expansion-panel-header>
-      Полисы обязательного страхования
-    </v-expansion-panel-header>
-    <v-expansion-panel-content>
-      <v-progress-linear 
-        v-if="isLoading"
-        indeterminate
-      />
-      <div
-        v-else-if="insurancePolices.length !== 0"
-      >
-        <v-list-item 
-         v-for="insurancePolice, index in insurancePolices" :key="index"
-          two-line
+  <PanelTemplate 
+    v-if="true"
+    title="Полисы обязательного страхования"
+    :error="error"
+    :loading="isLoading"
+  >
+    <ListItems
+      title="Серия"
+      :items="listItemsPolicies"
+      @add="addHandler"
+      @edit="editHandler"
+      @remove="removeHandler"
+    >
+      <template #actions>
+        <v-btn
+          fab
+          small
+          class="ma-4" 
+          color="primary"
+          @click="addHandler"
         >
-          <v-list-item-content>
-            <v-list-item-title>Полис</v-list-item-title>
-            <v-list-item-subtitle>Серия: {{ insurancePolice.series }}</v-list-item-subtitle>
-            <v-list-item-subtitle>Номер: {{ insurancePolice.number }}</v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-      </div>
-      <v-alert
-        v-if="error"
-        prominent
-        text
-        :type="error.type"
-      >
-        {{ error.text }}
-      </v-alert>
-    </v-expansion-panel-content>
-  </v-expansion-panel>
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+      </template>
+    </ListItems>
+  </PanelTemplate>
 </template>
 
 <script>
+import ListItems from '@/components/elements/ListItems.vue'
+import ListMenu from '@/components/elements/ListMenu.vue'
+import PanelTemplate from '@/components/elements/PanelTemplate.vue';
 import { getInsurancePolicies as getInsurancePoliciesAPI } from '@/libs/api'
 
 export default {
+  components: { ListMenu, ListItems, PanelTemplate },
   props: {
     vin: {
       type: String,
@@ -60,12 +57,38 @@ export default {
     return {
       isLoading: true,
       insurancePolices: [],
+      selectedItem: undefined,
       error: null,
+    }
+  },
+  computed: {
+    listItemsPolicies () {
+      return this.insurancePolices.map((policy) => {
+        const listItem = []
+        if (policy.series) {
+          listItem.push(`Серия: ${policy.series}`)
+        }
+
+        if (policy.number) {
+          listItem.push(`Номер: ${policy.number}`)
+        }
+
+        return { subtitles: listItem }
+      })
     }
   },
   methods: {
     init () {
       this.initInsurancePolices()
+    },
+    addHandler () {
+      console.log('add event');
+    },
+    editHandler (index) {
+      console.log('edit event', index);
+    },
+    removeHandler (index) {
+      console.log('remove event', index);
     },
     async initInsurancePolices () {
       this.isLoading = true
@@ -106,7 +129,7 @@ export default {
       }
     }
   },
-  mounted () {
+  created () {
     this.init()
   }
 }

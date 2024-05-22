@@ -1,52 +1,41 @@
 <template>
-  <v-expansion-panel>
-    <v-expansion-panel-header>
-      Даты регистраций
-    </v-expansion-panel-header>
-    <v-expansion-panel-content>
-      <v-progress-linear 
-        v-if="isLoading"
-        indeterminate
-      />
-      <div
-        v-else-if="registrationDates.length !== 0"
-      >
-        <v-list-item 
-         v-for="registrationDate, index in registrationDates" :key="index"
-          two-line
+  <PanelTemplate
+    title="Даты регистраций"
+    :error="error"
+    :loading="isLoading"
+  >
+    <ListItems
+      title="Регистрация"
+      :items="registrationDatesListItems"
+      @add="addHandler"
+      @edit="editHandler"
+      @remove="removeHandler"
+    >
+      <template #actions>
+        <v-btn
+          fab
+          small
+          class="ma-4" 
+          color="primary"
+          @click="addHandler"
         >
-          <v-list-item-content>
-            <v-list-item-title>Регистрация</v-list-item-title>
-            <v-list-item-subtitle 
-              v-if="registrationDate.start" 
-            >
-              С: {{ registrationDate.start }}
-            </v-list-item-subtitle>
-            <v-list-item-subtitle
-              v-if="registrationDate.end" 
-            >
-              По: {{ registrationDate.end }}
-            </v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-      </div>
-      <v-alert
-        v-if="error"
-        prominent
-        text
-        :type="error.type"
-      >
-        {{ error.text }}
-      </v-alert>
-    </v-expansion-panel-content>
-  </v-expansion-panel>
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+      </template>
+    </ListItems>
+  </PanelTemplate>
 </template>
 
 <script>
+import ListItems from '@/components/elements/ListItems.vue';
+import PanelTemplate from '@/components/elements/PanelTemplate.vue';
+
 import { getRegistrationDates as getRegistrationDatesAPI } from '@/libs/api'
+
 import { formatDate } from '@/libs/utils';
 
 export default {
+  components: { PanelTemplate, ListItems },
   props: {
     vin: {
       type: String,
@@ -68,13 +57,38 @@ export default {
   data () {
     return {
       isLoading: true,
-      registrationDates: [],
+      registrationsDates: [],
       error: null,
+    }
+  },
+  computed: {
+    registrationDatesListItems () {
+      return this.registrationsDates.map((registrationDates) => {
+        const items = []
+
+        if (registrationDates.start) {
+          items.push(`С: ${registrationDates.start}`)
+        }
+        if (registrationDates.end) {
+          items.push(`По: ${registrationDates.end}`)
+        }
+        
+        return { subtitles: items }
+      })
     }
   },
   methods: {
     init () {
       this.initRegistrationDates()
+    },
+    addHandler () {
+      console.log('add event');
+    },
+    editHandler (index) {
+      console.log('edit event', index);
+    },
+    removeHandler (index) {
+      console.log('remove event', index);
     },
     async initRegistrationDates () {
       this.isLoading = true
@@ -109,7 +123,7 @@ export default {
             date.end = formatDate(new Date(Number(end) * 1000))
           }
 
-          this.registrationDates.push(date)
+          this.registrationsDates.push(date)
         });
 
       } catch (error) {
@@ -124,7 +138,7 @@ export default {
       }
     }
   },
-  mounted () {
+  created () {
     this.init()
   }
 }
