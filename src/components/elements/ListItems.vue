@@ -6,7 +6,7 @@
       color="primary"
     >
       <v-list-item-content>
-        <v-list-item-title>{{ title }}</v-list-item-title>
+        <v-list-item-title>{{ item.title ?? title }}</v-list-item-title>
         <v-list-item-subtitle
           v-for="subtitle, index in item.subtitles"
           :key="index"
@@ -17,7 +17,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-list-item-action>
+      <v-list-item-action v-if="!item.disabled">
         <ListMenu
           editable
           removable
@@ -42,7 +42,7 @@ export default {
   props: {
     title: {
       type: String,
-      required: true
+      default: ''
     },
     items: {
       type: Array,

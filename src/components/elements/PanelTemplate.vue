@@ -11,7 +11,7 @@
       indeterminate
     />
 
-    <slot name="alert" />
+    <slot name="alert" v-else />
 
     <v-alert
       v-if="error"
@@ -22,7 +22,7 @@
       {{ error.text }}
     </v-alert>
 
-    <slot v-else />
+    <slot v-if="!loading" />
   </v-list-group>
 </template>
 

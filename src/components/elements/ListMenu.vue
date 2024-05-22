@@ -41,6 +41,10 @@ export default {
     removable: {
       type: Boolean,
       default: false
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -50,7 +54,7 @@ export default {
   },
   computed: {
     isDisabled () {
-      return !(this.editable && this.removable)
+      return this.disabled || (!this.editable && !this.removable)
     }
   },
   methods: {

@@ -3,17 +3,17 @@
     v-if="true"
     title="Пошлины"
     :error="error"
-    :loading="false"
+    :loading="isLoading"
   >
     <ListItems
-      title="Пошлина"
       :items="dutiesListItems"
       @add="addHandler"
       @edit="editHandler"
       @remove="removeHandler"
     >
       <template #actions>
-        <PayDuties 
+        <PayDuties
+          v-if="totalAmount != 0"
           :amount="totalAmount" 
           :vin="vin" 
           :abi="abi" 
@@ -34,6 +34,7 @@
 
     <template #alert>
       <v-alert
+        v-if="totalAmount == 0"
         prominent
         text
         type="success"
@@ -81,35 +82,55 @@ export default {
   data () {
     return {
       duties: [],
-      totalAmount: -1,
-      error: null
+      totalAmount: 0,
+      error: null,
+      isLoading: true
     }
   },
   computed: {
     dutiesListItems () {
       const duties = this.duties.map((duty) => {
-        const items = []
+        const item = {} 
         if (duty.name) {
-          items.push(duty.name)
-        }
-        if (duty.amount) {
-          items.push(duty.amount)
+          item.title = duty.name
         }
 
-        return { subtitles: items }
+        item.subtitles = (duty.amount ? [`${duty.amount} eth`] : [])
+
+        return item
       })
 
-      duties.push({ subtitles: [
-        `Всего: ${this.totalAmount} eth`
-      ]})
+      if (duties.length !== 0) {
+        duties.push({ 
+          title: 'Всего',
+          subtitles: [`${this.totalAmount} eth`],
+          disabled: true
+        })
+      }
 
       return duties
     }
   },
   methods: {
-    init () {
-      this.initDuties()
-      this.initTotalAmount()
+    async init () {
+      this.isLoading = true
+      this.error = null
+
+      try {
+        await Promise.all([
+          this.initDuties(),
+          this.initTotalAmount()
+        ])
+      } catch (error) {
+        console.error(error)
+
+        this.error = {
+          type: 'error',
+          text: 'Не удалось получить запись',
+        }
+      } finally {
+        this.isLoading = false
+      }
     },
     addHandler () {
       console.log('add event');
@@ -122,32 +143,19 @@ export default {
     },
     refreshData () {
       this.duties = []
-      this.totalAmount = -1
+      this.totalAmount = 0
 
       this.init()
     },
     async initDuties () {
-      const params = {
-        address: this.contractAddress,
-        abi: this.abi,
-        provider: this.provider,
-        vin: this.vin.toUpperCase(),
-      }
+      const dutiesArray = await this.getDuties()
 
-      try {
-        const dutiesArray = await getCarDutiesAPI(params)
-
-        dutiesArray.forEach((duty) => {
-          this.pushDuty(duty)
-        })
-      } catch (error) {
-        console.error(error)
-
-        this.error = {
-          type: 'error',
-          text: 'Не удалось получить запись',
-        }
-      }
+      dutiesArray.forEach((duty) => {
+        this.pushDuty(duty)
+      })
+    },
+    async initTotalAmount () {
+      this.totalAmount = await this.getTotalAmount()
     },
     async pushDuty (duty) {
       const amount = await this.getAmountDuty(duty)
@@ -158,24 +166,7 @@ export default {
       })
 
     },
-    async getAmountDuty (duty) {
-      const params = {
-        address: this.contractAddress,
-        abi: this.abi,
-        provider: this.provider,
-        duty
-      }
-
-      try {
-        const amount = await getAmountDutyAPI(params)
-
-        return formatEther(amount);
-        
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    async initTotalAmount () {
+    async getDuties () {
       const params = {
         address: this.contractAddress,
         abi: this.abi,
@@ -183,17 +174,34 @@ export default {
         vin: this.vin.toUpperCase(),
       }
 
-      try {
-        const totalAmount = await getTotalAmountAPI(params)
+      return getCarDutiesAPI(params)
 
-
-        this.totalAmount = formatEther(totalAmount)
-      } catch (error) {
-        console.error(error);
+    },
+    async getAmountDuty (duty) {
+      const params = {
+        address: this.contractAddress,
+        abi: this.abi,
+        provider: this.provider,
+        duty
       }
-    }
+      const amount = await getAmountDutyAPI(params)
+
+      return formatEther(amount)
+    },
+    async getTotalAmount () {
+      const params = {
+        address: this.contractAddress,
+        abi: this.abi,
+        provider: this.provider,
+        vin: this.vin.toUpperCase(),
+      }
+
+      const totalAmount = await getTotalAmountAPI(params)
+
+      return formatEther(totalAmount)
+    },
   },
-  mounted () {
+  created () {
     this.init()
   }
 }
