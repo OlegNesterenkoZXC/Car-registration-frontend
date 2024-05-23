@@ -7,7 +7,6 @@
   >
     <ListItems
       :items="dutiesListItems"
-      @add="addHandler"
       @edit="editHandler"
       @remove="removeHandler"
     >

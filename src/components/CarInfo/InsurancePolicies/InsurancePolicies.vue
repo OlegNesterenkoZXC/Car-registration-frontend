@@ -1,6 +1,5 @@
 <template>
-  <PanelTemplate 
-    v-if="true"
+  <PanelTemplate
     title="Полисы обязательного страхования"
     :error="error"
     :loading="isLoading"
@@ -8,7 +7,6 @@
     <ListItems
       title="Серия"
       :items="listItemsPolicies"
-      @add="addHandler"
       @edit="editHandler"
       @remove="removeHandler"
     >

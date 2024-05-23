@@ -7,7 +7,6 @@
     <ListItems
       title="Регистрация"
       :items="registrationDatesListItems"
-      @add="addHandler"
       @edit="editHandler"
       @remove="removeHandler"
     >

@@ -7,7 +7,6 @@
     <ListItems
       title="Регистрация"
       :items="vehiclePassportsListItems"
-      @add="addHandler"
       @edit="editHandler"
       @remove="removeHandler"
     >
