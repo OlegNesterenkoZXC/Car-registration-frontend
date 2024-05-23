@@ -78,6 +78,11 @@ export default {
       },
     }
   },
+  computed: {
+    vin () {
+      return this.vinNumber.toUpperCase()
+    }
+  },
   methods: {
     findHandler () {
       this.toCarInfo()
@@ -87,7 +92,7 @@ export default {
         address: this.contractAddress,
         abi: this.abi,
         provider: this.provider,
-        vin: this.vinNumber.toUpperCase(),
+        vin: this.vin
       }
 
       return isExistCarAPI(params)
@@ -112,7 +117,7 @@ export default {
         }
 
         this.$router.push({
-          path: `/car/${this.vinNumber.toUpperCase()}`
+          path: `/car/${this.vin}`
         })
       } catch (error) {
         console.error(error)

@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import SearchView from '../views/SearchView.vue';
+import SearchView from '@/views/SearchView.vue';
 
 Vue.use(VueRouter)
 

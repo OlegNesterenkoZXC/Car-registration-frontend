@@ -1,57 +1,46 @@
 <template>
-  <div>
-    <v-overlay v-if="isLoading">
-      <v-progress-circular indeterminate size="64" />
-    </v-overlay>
-    <v-container v-else>
-      <v-row>
-        <v-col v-if="error" cols="12">
-          <v-alert text prominent :type="error.type">
-            {{ error.text }}
-          </v-alert>
-        </v-col>
-        <v-col v-else>
-          <CarCard
-            :carInfo="carInfo"
-            :vin="vin"
-          >
-            <v-list nav>
-              <InsurancePolicies
-                :vin="vin" 
-                :abi="abi" 
-                :provider="provider" 
-                :contractAddress="contractAddress" 
-              />
-              <VehiclePassports
-                :vin="vin" 
-                :abi="abi" 
-                :provider="provider" 
-                :contractAddress="contractAddress" 
-              />
-              <RegistrationDates
-                :vin="vin" 
-                :abi="abi" 
-                :provider="provider" 
-                :contractAddress="contractAddress" 
-              />
-              <DutiesInfo 
-                :vin="vin" 
-                :abi="abi" 
-                :provider="provider" 
-                :contractAddress="contractAddress" 
-              />
-            </v-list>
-          </CarCard>
-        </v-col>
-      </v-row>
-    </v-container>
-  </div>
+  <CarCard
+    :carInfo="carInfo"
+    :vin="vin"
+    :loading="isLoading"
+    :error="error"
+  >
+    <VinInfo 
+      :vin="vin"
+    />
+    <InsurancePolicies
+      :vin="vin" 
+      :abi="abi" 
+      :provider="provider" 
+      :contractAddress="contractAddress" 
+    />
+    <VehiclePassports
+      :vin="vin" 
+      :abi="abi" 
+      :provider="provider" 
+      :contractAddress="contractAddress" 
+    />
+    <RegistrationDates
+      :vin="vin" 
+      :abi="abi" 
+      :provider="provider" 
+      :contractAddress="contractAddress" 
+    />
+    <DutiesInfo 
+      :vin="vin" 
+      :abi="abi" 
+      :provider="provider" 
+      :contractAddress="contractAddress" 
+    />
+  </CarCard>
 </template>
 
 <script>
-import { isExistCar as isExistsCarAPI, getVinInfo as getVinInfoAPI } from '@/libs/api'
+import { isExistCar as isExistsCarAPI } from '@/libs/api'
 
 import CarCard from "@/components/elements/CarCard.vue"
+
+import VinInfo from '@/components/CarInfo/VinInfo/VinInfo.vue'
 import InsurancePolicies from "@/components/CarInfo/InsurancePolicies/InsurancePolicies.vue"
 import VehiclePassports from "@/components/CarInfo/VehiclePassports/VehiclePassports.vue"
 import RegistrationDates from "@/components/CarInfo/RegistrationDates/RegistrationDates.vue"
@@ -59,7 +48,8 @@ import DutiesInfo from "@/components/CarInfo/DutiesInfo/DutiesInfo.vue"
 
 export default {
   components: { 
-    CarCard, 
+    CarCard,
+    VinInfo,
     DutiesInfo, 
     InsurancePolicies, 
     VehiclePassports, 
@@ -90,73 +80,19 @@ export default {
       error: null
     }
   },
-  computed: {
-    isValidProps () {
-      return this.contractAddress && this.provider && this.abi
-    },
-  },
-  watch: {
-    isValidProps: {
-      immediate: true,
-      handler (value) {
-
-        if (value) {
-          this.init()
-        }
-      }
-    }
-  },
   methods: {
-    init() {
+    async init () {
       this.isLoading = true
 
-      this.fetchExistingCar()
-        .then((isExistsCar) => {
-          if (!isExistsCar) {
-            throw Error('Car is not exists')
-          }
+      try {
+        const isExistCar = await this.isExistsCar()
 
-          this.isLoading = false 
-        })
-        .then(() => this.initVinInfo())
-        .catch((error) => {
-          console.error(error);
-
+        if (!isExistCar) {
           this.error = {
             type: 'info',
             text: 'Не найдено записей по этому VIN',
           }
-        })
-        .finally(() => {
-          this.isLoading = false  
-        })
-
-      // this.isLoading = true
-      // const isExistsCar = await this.fetchExistingCar()
-
-      // if (!isExistsCar) {
-      //   this.error = {
-      //     type: 'info',
-      //     text: 'Не найдено записей по этому VIN',
-      //   }
-
-      //   return
-      // } else {
-      //   await this.initVinInfo()
-      // }
-
-      // this.isLoading = false      
-    },
-    async fetchExistingCar () {
-      const params = {
-        address: this.contractAddress,
-        abi: this.abi,
-        provider: this.provider,
-        vin: this.vin.toUpperCase(),
-      }
-
-      try {
-        return isExistsCarAPI(params)
+        }
       } catch (error) {
         console.error(error)
 
@@ -164,15 +100,23 @@ export default {
           type: 'error',
           text: 'Не удалось получить запись',
         }
+      } finally {
+        this.isLoading = false
       }
     },
-    async initVinInfo() {
-      try {
-        this.carInfo = await getVinInfoAPI(this.vin)
-      } catch (error) {
-        
+    async isExistsCar () {
+      const params = {
+        address: this.contractAddress,
+        abi: this.abi,
+        provider: this.provider,
+        vin: this.vin,
       }
+
+      return isExistsCarAPI(params)
     }
   },
+  created () {
+    this.init()
+  }
 }
 </script>
