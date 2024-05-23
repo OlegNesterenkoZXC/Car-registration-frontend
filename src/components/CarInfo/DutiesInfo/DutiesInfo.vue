@@ -55,9 +55,9 @@ import {
 import { formatEther } from 'ethers'
 import { DUTIES_DESCRIPTION } from '@/constants'
 
-import PayDuties from './PayDuties.vue'
-import PanelTemplate from '@/components/elements/PanelTemplate.vue';
-import ListItems from '@/components/elements/ListItems.vue';
+import PayDuties from '@/components/CarInfo/DutiesInfo/PayDuties.vue'
+import PanelTemplate from '@/components/elements/PanelTemplate.vue'
+import ListItems from '@/components/elements/ListItems.vue'
 
 export default {
   components: { PayDuties, PanelTemplate, ListItems },

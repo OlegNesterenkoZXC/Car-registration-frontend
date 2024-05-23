@@ -1,13 +1,12 @@
 <template>
-  <PanelTemplate 
-    v-if="true"
-    title="Полисы обязательного страхования"
+  <PanelTemplate
+    title="Даты регистраций"
     :error="error"
     :loading="isLoading"
   >
     <ListItems
-      title="Серия"
-      :items="listItemsPolicies"
+      title="Регистрация"
+      :items="registrationDatesListItems"
       @add="addHandler"
       @edit="editHandler"
       @remove="removeHandler"
@@ -28,13 +27,15 @@
 </template>
 
 <script>
-import ListItems from '@/components/elements/ListItems.vue'
-import ListMenu from '@/components/elements/ListMenu.vue'
-import PanelTemplate from '@/components/elements/PanelTemplate.vue';
-import { getInsurancePolicies as getInsurancePoliciesAPI } from '@/libs/api'
+import ListItems from '@/components/elements/ListItems.vue';
+import PanelTemplate from '@/components/elements/PanelTemplate.vue'
+
+import { getRegistrationDates as getRegistrationDatesAPI } from '@/libs/api'
+
+import { formatDate } from '@/libs/utils'
 
 export default {
-  components: { ListMenu, ListItems, PanelTemplate },
+  components: { PanelTemplate, ListItems },
   props: {
     vin: {
       type: String,
@@ -56,30 +57,29 @@ export default {
   data () {
     return {
       isLoading: true,
-      insurancePolices: [],
-      selectedItem: undefined,
+      registrationsDates: [],
       error: null,
     }
   },
   computed: {
-    listItemsPolicies () {
-      return this.insurancePolices.map((policy) => {
-        const listItem = []
-        if (policy.series) {
-          listItem.push(`Серия: ${policy.series}`)
-        }
+    registrationDatesListItems () {
+      return this.registrationsDates.map((registrationDates) => {
+        const items = []
 
-        if (policy.number) {
-          listItem.push(`Номер: ${policy.number}`)
+        if (registrationDates.start) {
+          items.push(`С: ${registrationDates.start}`)
         }
-
-        return { subtitles: listItem }
+        if (registrationDates.end) {
+          items.push(`По: ${registrationDates.end}`)
+        }
+        
+        return { subtitles: items }
       })
     }
   },
   methods: {
     init () {
-      this.initInsurancePolices()
+      this.initRegistrationDates()
     },
     addHandler () {
       console.log('add event');
@@ -90,7 +90,7 @@ export default {
     removeHandler (index) {
       console.log('remove event', index);
     },
-    async initInsurancePolices () {
+    async initRegistrationDates () {
       this.isLoading = true
 
       const params = {
@@ -101,20 +101,29 @@ export default {
       }
 
       try {
-        const insurancePolicesArray = await getInsurancePoliciesAPI(params)
+        const registrationDatesArray = await getRegistrationDatesAPI(params)
 
-        if (insurancePolicesArray.length === 0) {
+        if (registrationDatesArray.length === 0) {
           this.error = {
             type: 'info',
-            text: 'Не найдено полисов по заданному VIN'
+            text: 'Не найдено дат регистраций по заданному VIN'
           }
         }
 
-        insurancePolicesArray.forEach(insurancePolice => {
-          this.insurancePolices.push({
-            series: insurancePolice?.[0],
-            number: insurancePolice?.[1],
-          })
+        registrationDatesArray.forEach(registrationDate => {
+          const date = {}
+
+          const start = registrationDate?.[0];
+          if (start && Number(start) !== 0) {
+            date.start = formatDate(new Date(Number(start) * 1000))
+          }
+
+          const end = registrationDate?.[1];
+          if (end && Number(end) !== 0) {
+            date.end = formatDate(new Date(Number(end) * 1000))
+          }
+
+          this.registrationsDates.push(date)
         });
 
       } catch (error) {

@@ -1,6 +1,5 @@
 <template>
   <PanelTemplate
-    v-if="true"
     title="Паспорта транспортного средства"
     :error="error"
     :loading="isLoading"
@@ -25,45 +24,11 @@
       </template>
     </ListItems>
   </PanelTemplate>
-  <v-list-group v-else>
-    <v-expansion-panel-header>
-      Паспорта транспортного средства
-    </v-expansion-panel-header>
-    <v-expansion-panel-content>
-      <v-progress-linear 
-        v-if="isLoading"
-        indeterminate
-      />
-      <div
-        v-else-if="vehiclePassports.length !== 0"
-      >
-        <v-list-item 
-         v-for="vehiclePassport, index in vehiclePassports" :key="index"
-          two-line
-        >
-          <v-list-item-content>
-            <v-list-item-title>ПТС</v-list-item-title>
-            <v-list-item-subtitle>Регион: {{ vehiclePassport.region }}</v-list-item-subtitle>
-            <v-list-item-subtitle>Серия: {{ vehiclePassport.series }}</v-list-item-subtitle>
-            <v-list-item-subtitle>Номер: {{ vehiclePassport.number }}</v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-      </div>
-      <v-alert
-        v-if="error"
-        prominent
-        text
-        :type="error.type"
-      >
-        {{ error.text }}
-      </v-alert>
-    </v-expansion-panel-content>
-  </v-list-group>
 </template>
 
 <script>
-import ListItems from '@/components/elements/ListItems.vue';
-import PanelTemplate from '@/components/elements/PanelTemplate.vue';
+import ListItems from '@/components/elements/ListItems.vue'
+import PanelTemplate from '@/components/elements/PanelTemplate.vue'
 import { getVehiclePassports as getVehiclePassportsAPI } from '@/libs/api'
 
 export default {

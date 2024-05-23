@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import ListMenu from "@/components/elements/ListMenu.vue";
+import ListMenu from "@/components/elements/ListMenu.vue"
 
 export default {
   components: { ListMenu },

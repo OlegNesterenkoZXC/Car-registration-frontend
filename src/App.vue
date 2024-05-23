@@ -1,24 +1,8 @@
 <template>
   <v-app>
-    <v-app-bar color="deep-purple" dark app>
-			<v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
-
-			<v-toolbar-title>Система учёта автомобилей</v-toolbar-title>
-			<v-spacer></v-spacer>
-		</v-app-bar>
-
-		<v-navigation-drawer v-model="drawer" absolute temporary app>
-			<v-list nav dense>
-				<v-list-item-group v-model="group" active-class="deep-purple--text text--accent-4">
-					<v-list-item to="/">
-						<v-list-item-icon>
-							<v-icon>mdi-home</v-icon>
-						</v-list-item-icon>
-						<v-list-item-title>Домой</v-list-item-title>
-					</v-list-item>
-				</v-list-item-group>
-			</v-list>
-		</v-navigation-drawer>
+    <AppFooter 
+      title="Система учёта автомобилей"
+    />
     <v-main>
       <v-overlay v-if="isLoading">
         <v-progress-circular
@@ -63,64 +47,65 @@
 <script>
 import { 
   getContractInfo as getContractInfoAPI,
-  getProvider as getProviderAPI,
 } from '@/libs/api'
+
+import { getProvider } from '@/libs/utils';
+
+import AppFooter from '@/components/elements/AppFooter.vue';
 
 export default {
   name: 'App',
+  components: { AppFooter },
   data: () => {
     return {
-      isLoadingContractInfo: false,
-      isLoadingProvider: true,
+      isLoading: true,
+      error: null,
       abi: null,
       provider: null,
-      metaMaskProvider: null,
-      contractAddress: '',
-      error: null,
-      drawer: false,
-      group: null
-    }
-  },
-  computed: {
-    isLoading () {
-      return this.isLoadingContractInfo || this.isLoadingProvider
+      contractAddress: ''
     }
   },
   methods: {
     clickHandler () {
-      this.error = null
-
       this.init()
     },
-    init () {
-      this.initProvider()
-      this.initContractInfo()
-    },
-    initContractInfo () {
-      this.isLoadingContractInfo = true
-      
-      getContractInfoAPI()
-        .then((data) => {
-          this.contractAddress = data.address
-          this.abi = data.abi
-        })
-        .catch((error) => {
-          console.error(error)
-
-          this.error = {
-            type: 'error',
-            text: 'Не удалось получить информацию о контракте'
-          }
-        })
-        .finally(() => {
-          this.isLoadingContractInfo = false
-        })
-    },
-    initProvider () {
-      this.isLoadingProvider = true
+    async init () {
+      this.isLoading = true
+      this.error = null
 
       try {
-        this.provider = getProviderAPI()
+        await Promise.all([
+          this.initProvider(),
+          this.initContractInfo()
+        ])
+      } catch (error) {
+        console.log(error)
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async getContractInfo () {
+      return getContractInfoAPI()
+    },
+    async initContractInfo () {
+      try {
+        const { abi, address } = await this.getContractInfo()
+
+        this.abi = abi
+        this.contractAddress = address
+
+      } catch (error) {
+        console.error(error)
+
+        this.error = {
+          type: 'error',
+          text: 'Не удалось получить информацию о контракте'
+        }
+      }
+    },
+    initProvider () {
+      try {
+        this.provider = getProvider()
       } catch (error) {
         console.error(error);
 
@@ -128,12 +113,10 @@ export default {
           type: 'error',
           text: 'Не удалось подключиться к Ethereum'
         }
-      } finally {
-        this.isLoadingProvider = false
       }
     },
   },
-  mounted() {
+  created () {
     this.init()
   },
 }

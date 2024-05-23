@@ -24,7 +24,7 @@
             x-large
             :loading="isLoading"
             :disabled="isLoading || !isValidForm"
-            @click="handler"
+            @click="findHandler"
           >
             Найти
           </v-btn>
@@ -79,16 +79,10 @@ export default {
     }
   },
   methods: {
-    handler () {
-      this.fetchExistingCar()
+    findHandler () {
+      this.toCarInfo()
     },
-    async fetchExistingCar () {
-      if(!this.$refs.form.validate()) {
-        return
-      }
-
-      this.isLoading = true
-
+    async isExistCar () {
       const params = {
         address: this.contractAddress,
         abi: this.abi,
@@ -96,8 +90,17 @@ export default {
         vin: this.vinNumber.toUpperCase(),
       }
 
+      return isExistCarAPI(params)
+    },
+    async toCarInfo () {
+      if(!this.$refs.form.validate()) {
+        return
+      }
+
+      this.isLoading = true
+
       try {
-        const isExistsCar = await isExistCarAPI(params)
+        const isExistsCar = await this.isExistCar()
 
         if (!isExistsCar) {
           this.error = {
@@ -109,7 +112,7 @@ export default {
         }
 
         this.$router.push({
-          path: `/car/${params.vin}`
+          path: `/car/${this.vinNumber.toUpperCase()}`
         })
       } catch (error) {
         console.error(error)

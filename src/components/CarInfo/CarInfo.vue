@@ -16,7 +16,7 @@
             :vin="vin"
           >
             <v-list nav>
-              <InsurancePolices
+              <InsurancePolicies
                 :vin="vin" 
                 :abi="abi" 
                 :provider="provider" 
@@ -34,7 +34,7 @@
                 :provider="provider" 
                 :contractAddress="contractAddress" 
               />
-              <MyDuties 
+              <DutiesInfo 
                 :vin="vin" 
                 :abi="abi" 
                 :provider="provider" 
@@ -49,16 +49,22 @@
 </template>
 
 <script>
-import CarCard from "@/components/elements/CarCard.vue";
-import MyDuties from "./MyDuties/MyDuties.vue"
-
 import { isExistCar as isExistsCarAPI, getVinInfo as getVinInfoAPI } from '@/libs/api'
-import InsurancePolices from "@/components/MyCar/InsurancePolicies/InsurancePolicies.vue";
-import VehiclePassports from "./VehiclePassports/VehiclePassports.vue";
-import RegistrationDates from "./RegistrationDates/RegistrationDates.vue";
+
+import CarCard from "@/components/elements/CarCard.vue"
+import InsurancePolicies from "@/components/CarInfo/InsurancePolicies/InsurancePolicies.vue"
+import VehiclePassports from "@/components/CarInfo/VehiclePassports/VehiclePassports.vue"
+import RegistrationDates from "@/components/CarInfo/RegistrationDates/RegistrationDates.vue"
+import DutiesInfo from "@/components/CarInfo/DutiesInfo/DutiesInfo.vue"
 
 export default {
-  components: { CarCard, MyDuties, InsurancePolices, VehiclePassports, RegistrationDates },
+  components: { 
+    CarCard, 
+    DutiesInfo, 
+    InsurancePolicies, 
+    VehiclePassports, 
+    RegistrationDates 
+  },
   props: {
     vin: {
       type: String,

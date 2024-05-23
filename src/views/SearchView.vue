@@ -1,6 +1,6 @@
 <template>
   <div>
-    <MySearch 
+    <CarSearch 
       :abi="abi"
       :provider="provider"
       :contractAddress="contractAddress"
@@ -9,10 +9,10 @@
 </template>
 
 <script>
-import MySearch from '@/components/MySearch.vue'
+import CarSearch from '@/components/CarSearch.vue'
 
 export default {
-  components: { MySearch },
+  components: { CarSearch },
   props: {
     abi: {
       type: Array,
@@ -29,7 +29,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-
-</style>

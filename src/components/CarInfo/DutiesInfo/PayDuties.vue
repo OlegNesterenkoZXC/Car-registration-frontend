@@ -64,10 +64,10 @@
 </template>
 
 <script>
-import { payCarDuties as payCarDutiesAPI } from '@/libs/api';
+import { payCarDuties as payCarDutiesAPI } from '@/libs/api'
 
-import ConnectMetaMask from '@/components/ConnectMetaMask.vue';
-import { parseEther } from 'ethers';
+import ConnectMetaMask from '@/components/ConnectMetaMask.vue'
+import { parseEther } from 'ethers'
 
 export default {
   components: { ConnectMetaMask },

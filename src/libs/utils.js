@@ -1,3 +1,7 @@
+import { JsonRpcProvider } from "ethers";
+
+import { BLOCKCHAIN_URL } from "@/constants";
+
 export function formatDate (date) {
   const days = date.getDate()
   let daysString = ''
@@ -16,4 +20,8 @@ export function formatDate (date) {
   }
 
   return `${daysString}.${monthsString}.${date.getFullYear()}`
+}
+
+export function getProvider () {
+  return new JsonRpcProvider(BLOCKCHAIN_URL)
 }

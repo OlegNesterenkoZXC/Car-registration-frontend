@@ -1,8 +1,8 @@
-import { ethers } from "ethers"
+import { Contract } from "ethers"
 import axios from "axios";
 import detectEthereumProvider from "@metamask/detect-provider";
 
-import { BLOCKCHAIN_URL, CONTRACT_INFO_URL } from "@/constants"
+import { CONTRACT_INFO_URL } from "@/constants"
 
 export async function getContractInfo () {
   const response = await axios.request({
@@ -11,10 +11,6 @@ export async function getContractInfo () {
   })
 
   return response.data
-}
-
-export function getProvider () {
-  return new ethers.JsonRpcProvider(BLOCKCHAIN_URL)
 }
 
 export async function getMetaMaskProvider () {
@@ -35,7 +31,7 @@ export async function getDutiesSize(params) {
     vin
   } = params
 
-  const contract = new ethers.Contract(address, abi, provider)
+  const contract = new Contract(address, abi, provider)
 
   return contract.getDutiesSize(vin)
 }
@@ -48,7 +44,7 @@ export async function isExistCar(params) {
     vin
   } = params
 
-  const contract = new ethers.Contract(address, abi, provider)
+  const contract = new Contract(address, abi, provider)
 
   return contract.isExistCar(vin)
 }
@@ -61,7 +57,7 @@ export async function getCarDuties(params) {
     vin
   } = params
 
-  const contract = new ethers.Contract(address, abi, provider)
+  const contract = new Contract(address, abi, provider)
 
   return contract.getCarDuties(vin)
 }
@@ -75,7 +71,7 @@ export async function getAmountDuty (params) {
     duty,
   } = params
 
-  const contract = new ethers.Contract(address, abi, provider)
+  const contract = new Contract(address, abi, provider)
 
   return contract.dutiesAmount(duty)
 }
@@ -88,7 +84,7 @@ export async function getTotalAmountDuties(params) {
     vin
   } = params
 
-  const contract = new ethers.Contract(address, abi, provider)
+  const contract = new Contract(address, abi, provider)
 
   return contract.getAmountDuties(vin)
 }
@@ -103,7 +99,7 @@ export async function payCarDuties (params) {
     amount
   } = params
   
-  const contract = new ethers.Contract(address, abi, provider)
+  const contract = new Contract(address, abi, provider)
   
   const tx = await contract.connect(signer).payCarDuties(vin, { value: amount })
   
@@ -118,7 +114,7 @@ export async function getInsurancePolicies (params) {
     vin
   } = params
 
-  const contract = new ethers.Contract(address, abi, provider)
+  const contract = new Contract(address, abi, provider)
 
   return contract.getInsurancePolicies(vin)
 }
@@ -131,7 +127,7 @@ export async function getVehiclePassports (params) {
     vin
   } = params
 
-  const contract = new ethers.Contract(address, abi, provider)
+  const contract = new Contract(address, abi, provider)
 
   return contract.getVehiclePassports(vin)
 }
@@ -144,13 +140,13 @@ export async function getRegistrationDates (params) {
     vin
   } = params
 
-  const contract = new ethers.Contract(address, abi, provider)
+  const contract = new Contract(address, abi, provider)
 
   return contract.getRegistrationDates(vin)
 }
 
 export async function getVinInfo (vin) {
-  const response = await axios.request({
+  const { data } = await axios.request({
     method: 'GET',
     url: `https://auto.dev/api/vin/${vin}`,
     params: {
@@ -158,5 +154,5 @@ export async function getVinInfo (vin) {
     }
   })
 
-  return response.data
+  return data
 }

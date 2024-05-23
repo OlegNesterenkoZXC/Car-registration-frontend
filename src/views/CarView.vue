@@ -1,6 +1,6 @@
 <template>
   <div>
-    <MyCar 
+    <CarInfo 
       :vin="carVin"
       :abi="abi"
       :provider="provider"
@@ -10,11 +10,10 @@
 </template>
 
 <script>
-import MyCar from '@/components/MyCar/MyCar.vue';
-
+import CarInfo from '@/components/CarInfo/CarInfo.vue';
 
 export default {
-  components: { MyCar },
+  components: { CarInfo },
   props: {
     abi: {
       type: Array,

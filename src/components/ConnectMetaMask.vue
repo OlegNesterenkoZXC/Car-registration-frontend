@@ -36,7 +36,7 @@
 
 <script>
 import { getMetaMaskProvider as getMetaMaskProviderAPI } from '@/libs/api'
-import { ethers } from 'ethers';
+import { ethers } from 'ethers'
 
 export default {
   props: {
