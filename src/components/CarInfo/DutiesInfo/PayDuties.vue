@@ -1,76 +1,53 @@
 <template>
-  <v-dialog 
-    v-model="dialog"
-    persistent
-    width="500"
+  <CustomModal 
+    :title="modalTitle"
+    :loading="isLoading"
+    modalButtonName="Оплатить"
+    :confirmButton="modalConfirmButton"
+    @confirm="confirmHandler"
   >
-    <template v-slot:activator="{ on, attrs }">
-      <v-btn
-        color="primary"
-        v-bind="attrs"
-        v-on="on"
-      >
-        Оплатить
-      </v-btn>
-    </template>
-
-    <v-card v-if="metaMaskProvider">
-      <v-card-title>Оплата</v-card-title>
-      
+    <div v-if="metaMaskProvider">
       <v-card-text>Ваш счёт: {{ signer.address }}</v-card-text>
       <v-card-text>К оплате: {{ amount }} eth</v-card-text>
       
-      <v-card-text v-if="error">
+      <v-card-text>
         <v-alert
+          v-if="error"
           prominent
           text
           :type="error.type"
         >
           {{ error.text }}
         </v-alert>
+
+        <v-alert
+          v-if="isLoading"
+          prominent
+          text
+          type="info"
+        >
+          Проверьте расширение
+        </v-alert>
       </v-card-text>
-
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn
-          color="primary"
-          :loading="isLoading"
-          :disabled="isLoading"
-          @click="payDuties"
-          text
-        >
-         Оплатить
-        </v-btn>
-        <v-btn
-          color="error"
-          text
-          :disabled="isLoading"
-          @click="dialog = false"
-        >
-          Отмена
-        </v-btn>
-      </v-card-actions>
-
-    </v-card>
+    </div>
 
     <ConnectMetaMask
       v-else
-      :provider="metaMaskProvider"
-      @change="changeProviderHandler"
-      @close="dialog = false"
+      ref="connectMetaMask"
     />
-
-  </v-dialog>
+  </CustomModal>
 </template>
 
 <script>
 import { payCarDuties as payCarDutiesAPI } from '@/libs/api'
 
 import ConnectMetaMask from '@/components/ConnectMetaMask.vue'
+import CustomModal from '@/components/elements/CustomModal.vue'
+
 import { parseEther } from 'ethers'
 
 export default {
-  components: { ConnectMetaMask },
+  components: { ConnectMetaMask, CustomModal },
   props: {
     amount: {
       type: String,
@@ -98,32 +75,66 @@ export default {
       signer: ''
     }
   },
+  computed: {
+    modalTitle () {
+      if (!this.metaMaskProvider) {
+        return 'Подключение к MetaMask'
+      }
+      
+      return 'Оплата'
+    },
+    modalConfirmButton () {
+      if (!this.metaMaskProvider) {
+        return 'Подключиться'
+      }
+
+      return 'Оплатить'
+    }
+  },
   methods: {
-    changeProviderHandler (provider) {
-      this.metaMaskProvider = provider
-
-      this.setSigner()
-
-      window.ethereum.on('accountsChanged', this.setSigner)
-    },
-    async setSigner () {
-      this.signer = await this.metaMaskProvider.getSigner()
-    },
-    async payDuties () {
+    async initMetMaskProvider () {
       this.isLoading = true
 
+      if (this.$refs.connectMetaMask) {
+        this.metaMaskProvider = await this.$refs.connectMetaMask.initMetMaskProvider()
+
+        this.refreshSigner()
+
+        window.ethereum.on('accountsChanged', this.refreshSigner)
+      }
+
+      this.isLoading = false
+    },
+    async confirmHandler () {
+      if (!this.metaMaskProvider) {
+        this.initMetMaskProvider()
+
+        return
+      }
+
+      this.payDuties()
+    },
+    async refreshSigner () {
+      this.signer = await this.metaMaskProvider.getSigner()
+    },
+    async payCarDuties () {
       const params = {
         address: this.contractAddress,
         signer: this.signer,
         abi: this.abi,
         provider: this.metaMaskProvider,
-        vin: this.vin.toUpperCase(),
+        vin: this.vin,
         amount: parseEther(this.amount),
       }
 
+      return payCarDutiesAPI(params)
+    },
+    async payDuties () {
+      this.isLoading = true
+      this.error = false
+
       try {
-        await payCarDutiesAPI (params)
-        this.dialog = false
+        await this.payCarDuties()
 
         this.$emit('success')
       } catch (error) {

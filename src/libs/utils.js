@@ -1,4 +1,4 @@
-import { JsonRpcProvider } from "ethers";
+import { JsonRpcProvider, BrowserProvider } from "ethers";
 
 import { BLOCKCHAIN_URL } from "@/constants";
 
@@ -24,4 +24,8 @@ export function formatDate (date) {
 
 export function getProvider () {
   return new JsonRpcProvider(BLOCKCHAIN_URL)
+}
+
+export function getBrowserProvider (provider) {
+  return new BrowserProvider(provider)
 }
