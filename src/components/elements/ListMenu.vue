@@ -12,16 +12,22 @@
     </template>
     <v-list nav>
       <v-list-item-group v-model="selectedItem">
-        <v-list-item v-if="editable">
+        <v-list-item 
+          v-if="editable"
+          @click="$emit('edit')"
+        >
           <v-list-item-content>
-            <v-list-item-title @click="$emit('edit')">
+            <v-list-item-title>
               Изменить
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-        <v-list-item v-if="removable">
+        <v-list-item 
+          v-if="removable"
+          @click="$emit('remove')"
+        >
           <v-list-item-content>
-            <v-list-item-title @click="$emit('remove')">
+            <v-list-item-title>
               Удалить
             </v-list-item-title>
           </v-list-item-content>
@@ -60,6 +66,8 @@ export default {
   methods: {
     openHandler () {
       this.selectedItem = undefined
+      
+      this.$emit('open')
     }
   }
 

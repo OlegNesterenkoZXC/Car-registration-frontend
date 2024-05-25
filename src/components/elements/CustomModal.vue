@@ -6,9 +6,23 @@
   >
     <template v-slot:activator="{ on, attrs }">
       <v-btn
+        v-if="isIconActivator"
+        fab
+        small
+        color="primary"
+        class="ma-4"
+        v-bind="attrs"
+        v-on="on"
+        @click="openHandler"
+      >
+        <v-icon>{{ iconActivator }}</v-icon>
+      </v-btn>
+      <v-btn
+        v-else
         color="primary"
         v-bind="attrs"
         v-on="on"
+        @click="openHandler"
       >
         {{ modalButtonName }}
       </v-btn>
@@ -25,7 +39,7 @@
           <v-btn
             color="primary"
             :loading="loading"
-            :disabled="loading"
+            :disabled="loading || disabledConfirmButton"
             @click="$emit('confirm')"
             text
           >
@@ -46,7 +60,7 @@
 </template>
 
 <script>
-const BUTTONS_TEXT = {
+const BUTTON_TEXT = {
   confirm: 'Подтвердить',
   cancel: 'Отмена'
 }
@@ -55,7 +69,15 @@ export default {
   props: {
     modalButtonName: {
       type: String,
-      required: true
+      default: 'Открыть'
+    },
+    isIconActivator: {
+      type: Boolean,
+      default: false
+    },
+    iconActivator: {
+      type: String,
+      default: 'mdi-plus'
     },
     title: {
       type: String,
@@ -63,11 +85,15 @@ export default {
     },
     confirmButton: {
       type: String,
-      default: BUTTONS_TEXT.confirm
+      default: BUTTON_TEXT.confirm
+    },
+    disabledConfirmButton : {
+      type: Boolean,
+      default: false
     },
     cancelButton: {
       type: String,
-      default: BUTTONS_TEXT.cancel
+      default: BUTTON_TEXT.cancel
     },
     loading: {
       type: Boolean,
@@ -81,7 +107,18 @@ export default {
   },
   computed: {
   },
+  watch: {
+    dialog (value) {
+      this.$emit('change', value)
+    }
+  },
   methods: {
+    openHandler () {
+      this.$emit('activator')
+    },
+    openDialog () {
+      this.dialog = true
+    },
     cancelHandler () {
       this.dialog = false
       this.$emit('cancel')

@@ -163,7 +163,6 @@ export default {
         name: DUTIES_DESCRIPTION[duty],
         amount
       })
-
     },
     async getDuties () {
       const params = {
@@ -174,7 +173,6 @@ export default {
       }
 
       return getCarDutiesAPI(params)
-
     },
     async getAmountDuty (duty) {
       const params = {

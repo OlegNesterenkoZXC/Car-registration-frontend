@@ -5,7 +5,7 @@
     :loading="isLoading"
   >
     <ListItems
-      title="Регистрация"
+      title="Паспорт"
       :items="vehiclePassportsListItems"
       @edit="editHandler"
       @remove="removeHandler"
@@ -96,7 +96,7 @@ export default {
         address: this.contractAddress,
         abi: this.abi,
         provider: this.provider,
-        vin: this.vin.toUpperCase(),
+        vin: this.vin,
       }
 
       try {

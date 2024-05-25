@@ -1,5 +1,5 @@
 <template>
-  <v-list-item-group>
+  <v-list-item-group v-model="selectedItem">
     <v-list-item
       v-for="item, index in items"
       :key="index"
@@ -21,6 +21,7 @@
         <ListMenu
           editable
           removable
+          @open="selectedItem = index"
           @edit="$emit('edit', index)"
           @remove="$emit('remove', index)"
         />
@@ -48,6 +49,11 @@ export default {
       type: Array,
       required: true
     }
-  }
+  },
+  data () {
+    return {
+      selectedItem: undefined
+    }
+  },
 }
 </script>

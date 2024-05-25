@@ -145,6 +145,20 @@ export async function getRegistrationDates (params) {
   return contract.getRegistrationDates(vin)
 }
 
+export async function hasRole (params) {
+  const {
+    address,
+    abi,
+    provider,
+    signer,
+    role
+  } = params
+
+  const contract = new Contract(address, abi, provider)
+
+  return contract.hasRole(role, signer)
+}
+
 export async function getVinInfo (vin) {
   const { data } = await axios.request({
     method: 'GET',
@@ -155,4 +169,58 @@ export async function getVinInfo (vin) {
   })
 
   return data
+}
+
+export async function addInsurancePolicy (params) {
+  const {
+    address,
+    abi,
+    provider,
+    signer,
+    vin,
+    series,
+    number
+  } = params
+  
+  const contract = new Contract(address, abi, provider)
+  
+  const tx = await contract.connect(signer).addInsurancePolicy(vin, [series, number])
+  
+  return tx.wait()
+}
+
+export async function editInsurancePolicy (params) {
+  const {
+    address,
+    abi,
+    provider,
+    signer,
+    vin,
+    index,
+    series,
+    number
+  } = params
+  
+  const contract = new Contract(address, abi, provider)
+  
+  const tx = await contract.connect(signer).editInsurancePolicy(vin, index, [series, number])
+
+  return tx.wait()
+}
+
+export async function removeInsurancePolicy (params) {
+  const {
+    address,
+    abi,
+    provider,
+    signer,
+    vin,
+    index
+  } = params
+  
+  const contract = new Contract(address, abi, provider)
+  
+  const tx = await contract.connect(signer).removeInsurancePolicy(vin, index)
+  
+  return tx.wait()
 }

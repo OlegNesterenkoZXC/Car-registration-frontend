@@ -28,7 +28,7 @@ export default {
       return getMetaMaskProviderAPI()
     },
     async initMetMaskProvider () {
-      this.error = true
+      this.error = null
 
       try {
         const provider = await getMetaMaskProviderAPI()
