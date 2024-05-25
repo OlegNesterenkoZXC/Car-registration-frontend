@@ -84,6 +84,7 @@ import {
 import { encodeRole } from '@/libs/utils'
 
 import { MODE } from '@/constants';
+import { mapState } from 'vuex';
 
 const MODAL_TYPE_MAPPING = {
   [MODE.ADD]: {
@@ -133,19 +134,7 @@ export default {
     vin: {
       type: String,
       required: true
-    },
-    abi: {
-      type: Array,
-      required: true,
-    },
-    provider: {
-      type: Object,
-      required: true,
-    },
-    contractAddress: {
-      type: String,
-      required: true,
-    },
+    }
   },
   data () {
     return {
@@ -153,8 +142,6 @@ export default {
       isDisabled: false,
       isEditor: false,
       isValidForm: false,
-      metaMaskProvider: null,
-      signer: '',
       series: '',
       seriesRules: {
         required: (v) => !!v || 'Серия обязательное поле',
@@ -169,7 +156,27 @@ export default {
       alert: null
     }
   },
+  watch: {
+    addressSigner: {
+      immediate: true,
+      handler (value, oldValue) {
+        if (value !== oldValue) {
+          this.refreshSigner()
+        }
+      }
+    }
+  },
   computed: {
+    ...mapState({
+      metaMaskProvider: 'metaMaskProvider',
+      signer: 'signer',
+      httpProvider: 'httpProvider',
+      abi: 'abi',
+      contractAddress: 'contractAddress'
+    }),
+    addressSigner () {
+      return this.signer?.address ?? ''
+    },
     modalType () {
       if (!this.metaMaskProvider) {
         return MODAL_TYPE_MAPPING.CONNECT_METAMASK
@@ -231,11 +238,7 @@ export default {
       this.isLoading = true
 
       if (this.$refs.connectMetaMask) {
-        this.metaMaskProvider = await this.$refs.connectMetaMask.initMetMaskProvider()
-
-        window.ethereum.on('accountsChanged', this.refreshSigner)
-
-        await this.refreshSigner()
+        await this.$refs.connectMetaMask.initMetMaskProvider()
       }
 
       this.isLoading = false
@@ -244,7 +247,7 @@ export default {
       const params = {
         address: this.contractAddress,
         abi: this.abi,
-        provider: this.provider,
+        provider: this.httpProvider,
         signer: this.signer,
         role: encodeRole('EDITOR')
       }
@@ -262,7 +265,6 @@ export default {
     },
     async refreshSigner () {
       try {
-        this.signer = await this.metaMaskProvider.getSigner()
         this.error = null
 
         const hasRole = await this.hasRole()
@@ -327,7 +329,7 @@ export default {
       const params = {
         address: this.contractAddress,
         abi: this.abi,
-        provider: this.provider,
+        provider: this.httpProvider,
         signer: this.signer,
         vin: this.vin,
         series: this.series,
@@ -340,7 +342,7 @@ export default {
       const params = {
         address: this.contractAddress,
         abi: this.abi,
-        provider: this.provider,
+        provider: this.httpProvider,
         signer: this.signer,
         vin: this.vin,
         index: this.insurancePolicy.index,
@@ -354,7 +356,7 @@ export default {
       const params = {
         address: this.contractAddress,
         abi: this.abi,
-        provider: this.provider,
+        provider: this.httpProvider,
         signer: this.signer,
         vin: this.vin,
         index: this.insurancePolicy.index

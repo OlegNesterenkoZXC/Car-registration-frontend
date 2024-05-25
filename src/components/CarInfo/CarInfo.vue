@@ -1,45 +1,22 @@
 <template>
   <CarCard
-    :carInfo="carInfo"
     :vin="vin"
     :loading="isLoading"
     :error="error"
   >
-    <VinInfo 
-      :vin="vin"
-    />
-    <InsurancePolicies
-      :vin="vin" 
-      :abi="abi" 
-      :provider="provider" 
-      :contractAddress="contractAddress" 
-    />
-    <VehiclePassports
-      :vin="vin" 
-      :abi="abi" 
-      :provider="provider" 
-      :contractAddress="contractAddress" 
-    />
-    <RegistrationDates
-      :vin="vin" 
-      :abi="abi" 
-      :provider="provider" 
-      :contractAddress="contractAddress" 
-    />
-    <DutiesInfo 
-      :vin="vin" 
-      :abi="abi" 
-      :provider="provider" 
-      :contractAddress="contractAddress" 
-    />
+    <VinInfo :vin="vin" />
+    <InsurancePolicies :vin="vin" />
+    <VehiclePassports :vin="vin" />
+    <RegistrationDates :vin="vin" />
+    <DutiesInfo :vin="vin" />
   </CarCard>
 </template>
 
 <script>
 import { isExistCar as isExistsCarAPI } from '@/libs/api'
+import { mapState } from 'vuex'
 
 import CarCard from "@/components/elements/CarCard.vue"
-
 import VinInfo from '@/components/CarInfo/VinInfo/VinInfo.vue'
 import InsurancePolicies from "@/components/CarInfo/InsurancePolicies/InsurancePolicies.vue"
 import VehiclePassports from "@/components/CarInfo/VehiclePassports/VehiclePassports.vue"
@@ -59,19 +36,7 @@ export default {
     vin: {
       type: String,
       required: true
-    },
-    abi: {
-      type: Array,
-      required: true,
-    },
-    provider: {
-      type: Object,
-      required: true,
-    },
-    contractAddress: {
-      type: String,
-      required: true,
-    },
+    }
   },
   data () {
     return {
@@ -79,6 +44,13 @@ export default {
       carInfo: null,
       error: null
     }
+  },
+  computed: {
+    ...mapState({
+      httpProvider: 'httpProvider',
+      abi: 'abi',
+      contractAddress: 'contractAddress'
+    })
   },
   methods: {
     async init () {
@@ -108,7 +80,7 @@ export default {
       const params = {
         address: this.contractAddress,
         abi: this.abi,
-        provider: this.provider,
+        provider: this.httpProvider,
         vin: this.vin,
       }
 

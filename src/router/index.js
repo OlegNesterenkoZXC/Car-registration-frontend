@@ -9,7 +9,6 @@ const routes = [
     path: '/',
     name: 'home',
     component: SearchView,
-    props: true,
   },
   {
     path: '/car/:vin',

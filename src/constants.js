@@ -8,6 +8,12 @@ export const DUTIES_DESCRIPTION = {
   ISSUANCE_VEHICLE_PASSPORT: 'Выдача нового ПТС',
 }
 
+export const MODE = {
+  ADD: "ADD",
+  EDIT: "EDIT",
+  REMOVE: "REMOVE"
+}
+
 export const BLOCKCHAIN_URL = 'http://127.0.0.1:8545'
 
 export const CONTRACT_INFO_URL = "http://127.0.0.1:3000/contract"

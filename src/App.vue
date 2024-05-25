@@ -34,12 +34,7 @@
         </v-alert>
       </v-container>
 
-      <router-view 
-        v-else 
-        :abi="abi"
-        :provider="provider"
-        :contractAddress="contractAddress"
-      />
+      <router-view v-else />
     </v-main>
   </v-app>
 </template>
@@ -50,6 +45,7 @@ import {
 } from '@/libs/api'
 
 import { getProvider } from '@/libs/utils';
+import { mapActions } from 'vuex';
 
 import AppFooter from '@/components/elements/AppFooter.vue';
 
@@ -60,12 +56,13 @@ export default {
     return {
       isLoading: true,
       error: null,
-      abi: null,
-      provider: null,
-      contractAddress: ''
     }
   },
   methods: {
+    ...mapActions({
+      initHttpProvider: 'initHttpProvider',
+      initStoreContractInfo: 'initContractInfo'
+    }),
     clickHandler () {
       this.init()
     },
@@ -73,16 +70,12 @@ export default {
       this.isLoading = true
       this.error = null
 
-      try {
-        await Promise.all([
-          this.initProvider(),
-          this.initContractInfo()
-        ])
-      } catch (error) {
-        console.log(error)
-      } finally {
-        this.isLoading = false
-      }
+      await Promise.all([
+        this.initProvider(),
+        this.initContractInfo()
+      ])
+
+      this.isLoading = false
     },
     async getContractInfo () {
       return getContractInfoAPI()
@@ -91,9 +84,10 @@ export default {
       try {
         const { abi, address } = await this.getContractInfo()
 
-        this.abi = abi
-        this.contractAddress = address
-
+        this.initStoreContractInfo({
+          abi,
+          address
+        })
       } catch (error) {
         console.error(error)
 
@@ -105,7 +99,9 @@ export default {
     },
     initProvider () {
       try {
-        this.provider = getProvider()
+        const provider = getProvider()
+
+        this.initHttpProvider(provider)
       } catch (error) {
         console.error(error);
 

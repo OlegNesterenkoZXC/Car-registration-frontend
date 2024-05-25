@@ -28,6 +28,8 @@
 <script>
 import ListItems from '@/components/elements/ListItems.vue'
 import PanelTemplate from '@/components/elements/PanelTemplate.vue'
+
+import { mapState } from 'vuex';
 import { getVehiclePassports as getVehiclePassportsAPI } from '@/libs/api'
 
 export default {
@@ -36,19 +38,7 @@ export default {
     vin: {
       type: String,
       required: true
-    },
-    abi: {
-      type: Array,
-      required: true,
-    },
-    provider: {
-      type: Object,
-      required: true,
-    },
-    contractAddress: {
-      type: String,
-      required: true,
-    },
+    }
   },
   data () {
     return {
@@ -58,6 +48,11 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      httpProvider: 'httpProvider',
+      abi: 'abi',
+      contractAddress: 'contractAddress'
+    }),
     vehiclePassportsListItems () {
       return this.vehiclePassports.map((vehiclePassport) => {
         const items = []
@@ -95,7 +90,7 @@ export default {
       const params = {
         address: this.contractAddress,
         abi: this.abi,
-        provider: this.provider,
+        provider: this.httpProvider,
         vin: this.vin,
       }
 

@@ -14,9 +14,7 @@
         <PayDuties
           v-if="totalAmount != 0"
           :amount="totalAmount" 
-          :vin="vin" 
-          :abi="abi" 
-          :contractAddress="contractAddress" 
+          :vin="vin"
           @success="refreshData" 
         />
         <v-btn
@@ -51,8 +49,9 @@ import {
   getTotalAmountDuties as getTotalAmountAPI 
 } from '@/libs/api'
 
-import { formatEther } from 'ethers'
+import { formatEther } from '@/libs/utils'
 import { DUTIES_DESCRIPTION } from '@/constants'
+import { mapState } from 'vuex'
 
 import PayDuties from '@/components/CarInfo/DutiesInfo/PayDuties.vue'
 import PanelTemplate from '@/components/elements/PanelTemplate.vue'
@@ -64,19 +63,7 @@ export default {
     vin: {
       type: String,
       required: true
-    },
-    abi: {
-      type: Array,
-      required: true,
-    },
-    provider: {
-      type: Object,
-      required: true,
-    },
-    contractAddress: {
-      type: String,
-      required: true,
-    },
+    }
   },
   data () {
     return {
@@ -87,6 +74,11 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      httpProvider: 'httpProvider',
+      abi: 'abi',
+      contractAddress: 'contractAddress'
+    }),
     dutiesListItems () {
       const duties = this.duties.map((duty) => {
         const item = {} 
@@ -168,8 +160,8 @@ export default {
       const params = {
         address: this.contractAddress,
         abi: this.abi,
-        provider: this.provider,
-        vin: this.vin.toUpperCase(),
+        provider: this.httpProvider,
+        vin: this.vin,
       }
 
       return getCarDutiesAPI(params)
@@ -178,7 +170,7 @@ export default {
       const params = {
         address: this.contractAddress,
         abi: this.abi,
-        provider: this.provider,
+        provider: this.httpProvider,
         duty
       }
       const amount = await getAmountDutyAPI(params)
@@ -189,8 +181,8 @@ export default {
       const params = {
         address: this.contractAddress,
         abi: this.abi,
-        provider: this.provider,
-        vin: this.vin.toUpperCase(),
+        provider: this.httpProvider,
+        vin: this.vin,
       }
 
       const totalAmount = await getTotalAmountAPI(params)

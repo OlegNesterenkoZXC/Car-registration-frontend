@@ -16,9 +16,6 @@
           :insurancePolicy="selectedPolicy"
           :mode="mode"
           :vin="vin"
-          :abi="abi"
-          :provider="provider"
-          :contractAddress="contractAddress"
           @add="addHandler"
           @success="refreshData"
         />
@@ -33,6 +30,7 @@ import ListMenu from '@/components/elements/ListMenu.vue'
 import EditInsurancePolicy from "@/components/CarInfo/InsurancePolicies/EditInsurancePolicy.vue";
 import PanelTemplate from '@/components/elements/PanelTemplate.vue'
 
+import { mapState } from 'vuex';
 import { getInsurancePolicies as getInsurancePoliciesAPI } from '@/libs/api'
 import { MODE } from '@/constants'
 
@@ -42,18 +40,6 @@ export default {
     vin: {
       type: String,
       required: true
-    },
-    abi: {
-      type: Array,
-      required: true,
-    },
-    provider: {
-      type: Object,
-      required: true,
-    },
-    contractAddress: {
-      type: String,
-      required: true,
     },
   },
   data () {
@@ -66,6 +52,11 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      httpProvider: 'httpProvider',
+      abi: 'abi',
+      contractAddress: 'contractAddress'
+    }),
     listItemsPolicies () {
       return this.insurancePolices.map((policy) => {
         const listItem = []
@@ -117,7 +108,7 @@ export default {
       const params = {
         address: this.contractAddress,
         abi: this.abi,
-        provider: this.provider,
+        provider: this.httpProvider,
         vin: this.vin.toUpperCase(),
       }
 

@@ -50,21 +50,9 @@
 import { isExistCar as isExistCarAPI } from '@/libs/api'
 import { VIN_REGEXP } from '@/constants'
 
+import { mapState } from 'vuex';
+
 export default {
-  props: {
-    abi: {
-      type: Array,
-      required: true,
-    },
-    provider: {
-      type: Object,
-      required: true,
-    },
-    contractAddress: {
-      type: String,
-      required: true,
-    },
-  },
   data() {
     return {
       isValidForm: false,
@@ -79,6 +67,11 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      httpProvider: 'httpProvider',
+      abi: 'abi',
+      contractAddress: 'contractAddress'
+    }),
     vin () {
       return this.vinNumber.toUpperCase()
     }
@@ -91,7 +84,7 @@ export default {
       const params = {
         address: this.contractAddress,
         abi: this.abi,
-        provider: this.provider,
+        provider: this.httpProvider,
         vin: this.vin
       }
 

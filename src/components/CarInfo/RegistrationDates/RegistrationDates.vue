@@ -33,25 +33,15 @@ import { getRegistrationDates as getRegistrationDatesAPI } from '@/libs/api'
 
 import { formatDate } from '@/libs/utils'
 
+import { mapState } from 'vuex';
+
 export default {
   components: { PanelTemplate, ListItems },
   props: {
     vin: {
       type: String,
       required: true
-    },
-    abi: {
-      type: Array,
-      required: true,
-    },
-    provider: {
-      type: Object,
-      required: true,
-    },
-    contractAddress: {
-      type: String,
-      required: true,
-    },
+    }
   },
   data () {
     return {
@@ -61,6 +51,11 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      httpProvider: 'httpProvider',
+      abi: 'abi',
+      contractAddress: 'contractAddress'
+    }),
     registrationDatesListItems () {
       return this.registrationsDates.map((registrationDates) => {
         const items = []
@@ -95,7 +90,7 @@ export default {
       const params = {
         address: this.contractAddress,
         abi: this.abi,
-        provider: this.provider,
+        provider: this.httpProvider,
         vin: this.vin.toUpperCase(),
       }
 

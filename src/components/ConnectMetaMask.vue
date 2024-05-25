@@ -16,6 +16,7 @@
 <script>
 import { getMetaMaskProvider as getMetaMaskProviderAPI } from '@/libs/api'
 import { getBrowserProvider } from '@/libs/utils';
+import { mapActions } from 'vuex';
 
 export default {
   data () {
@@ -27,16 +28,21 @@ export default {
     async getMetaMaskProvider () {
       return getMetaMaskProviderAPI()
     },
+    ...mapActions({
+      storeInitMetaMaskProvider: 'initMetaMaskProvider',
+      storeInitSigner: 'initSigner'
+    }),
     async initMetMaskProvider () {
       this.error = null
 
       try {
-        const provider = await getMetaMaskProviderAPI()
+        const provider = await this.getMetaMaskProvider()
         
-        const metaMaskProvider = getBrowserProvider(provider)
-        await metaMaskProvider.getSigner()
+        const ethersMetaMaskProvider = getBrowserProvider(provider)
+        const signer = await ethersMetaMaskProvider.getSigner()
 
-        return metaMaskProvider
+        this.storeInitMetaMaskProvider(ethersMetaMaskProvider)
+        this.storeInitSigner(signer)
       } catch (error) {
         console.error(error)
 

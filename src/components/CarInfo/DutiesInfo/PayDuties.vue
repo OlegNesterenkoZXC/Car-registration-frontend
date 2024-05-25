@@ -45,6 +45,7 @@ import ConnectMetaMask from '@/components/ConnectMetaMask.vue'
 import CustomModal from '@/components/elements/CustomModal.vue'
 
 import { parseEther } from 'ethers'
+import { mapState } from 'vuex';
 
 export default {
   components: { ConnectMetaMask, CustomModal },
@@ -56,26 +57,22 @@ export default {
     vin: {
       type: String,
       required: true
-    },
-    abi: {
-      type: Array,
-      required: true,
-    },
-    contractAddress: {
-      type: String,
-      required: true,
-    },
+    }
   },
   data () {
     return {
       isLoading: false,
       dialog: false,
       error: null,
-      metaMaskProvider: null,
-      signer: ''
     }
   },
   computed: {
+    ...mapState({
+      abi: 'abi',
+      contractAddress: 'contractAddress',
+      metaMaskProvider: 'metaMaskProvider',
+      signer: 'signer'
+    }),
     modalTitle () {
       if (!this.metaMaskProvider) {
         return 'Подключение к MetaMask'
@@ -96,11 +93,7 @@ export default {
       this.isLoading = true
 
       if (this.$refs.connectMetaMask) {
-        this.metaMaskProvider = await this.$refs.connectMetaMask.initMetMaskProvider()
-
-        this.refreshSigner()
-
-        window.ethereum.on('accountsChanged', this.refreshSigner)
+        await this.$refs.connectMetaMask.initMetMaskProvider()
       }
 
       this.isLoading = false
