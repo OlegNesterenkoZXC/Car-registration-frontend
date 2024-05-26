@@ -17,10 +17,10 @@
 
       <v-spacer></v-spacer>
 
-      <v-list-item-action v-if="!item.disabled">
+      <v-list-item-action v-if="item.editable || item.removable">
         <ListMenu
-          editable
-          removable
+          :editable="item.editable"
+          :removable="item.removable"
           @open="selectedItem = index"
           @edit="$emit('edit', index)"
           @remove="$emit('remove', index)"

@@ -77,7 +77,13 @@ export default {
           listItem.push(`Номер: ${policy.number}`)
         }
 
-        return { subtitles: listItem }
+        const item = {
+          subtitles: listItem,
+          editable: true,
+          removable: true
+        }
+
+        return item
       })
     }
   },
@@ -115,16 +121,10 @@ export default {
     },
     async initInsurancePolices () {
       this.isLoading = true
-
-      const params = {
-        address: this.contractAddress,
-        abi: this.abi,
-        provider: this.httpProvider,
-        vin: this.vin.toUpperCase(),
-      }
+      this.error = null
 
       try {
-        const insurancePolicesArray = await getInsurancePoliciesAPI(params)
+        const insurancePolicesArray = await this.getInsurancePolicies()
 
         if (insurancePolicesArray.length === 0) {
           this.error = {
@@ -150,6 +150,16 @@ export default {
       } finally {
         this.isLoading = false
       }
+    },
+    async getInsurancePolicies () {
+      const params = {
+        address: this.contractAddress,
+        abi: this.abi,
+        provider: this.httpProvider,
+        vin: this.vin,
+      }
+
+      return getInsurancePoliciesAPI(params)
     }
   },
   created () {

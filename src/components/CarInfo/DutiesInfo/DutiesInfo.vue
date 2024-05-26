@@ -88,14 +88,15 @@ export default {
 
         item.subtitles = (duty.amount ? [`${duty.amount} eth`] : [])
 
+        item.removable = true
+
         return item
       })
 
       if (duties.length !== 0) {
         duties.push({ 
           title: 'Всего',
-          subtitles: [`${this.totalAmount} eth`],
-          disabled: true
+          subtitles: [`${this.totalAmount} eth`]
         })
       }
 

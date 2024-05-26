@@ -67,19 +67,25 @@ export default {
     }),
     vehiclePassportsListItems () {
       return this.vehiclePassports.map((vehiclePassport) => {
-        const items = []
+        const listItems = []
 
         if(vehiclePassport.region) {
-          items.push(`Регион: ${vehiclePassport.region}`)
+          listItems.push(`Регион: ${vehiclePassport.region}`)
         }
         if(vehiclePassport.series) {
-          items.push(`Серия: ${vehiclePassport.series}`)
+          listItems.push(`Серия: ${vehiclePassport.series}`)
         }
         if(vehiclePassport.number) {
-          items.push(`Номер: ${vehiclePassport.number}`)
+          listItems.push(`Номер: ${vehiclePassport.number}`)
         }
 
-        return { subtitles: items }
+        const item = {
+          subtitles: listItems,
+          editable: true,
+          removable: true
+        }
+
+        return item
       })
     }
   },
