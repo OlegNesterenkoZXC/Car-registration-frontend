@@ -19,6 +19,15 @@
           @add="addHandler"
           @success="refreshData"
         />
+        <v-btn
+          fab
+          small
+          color="primary"
+          class="ma-4"
+          @click="addHandler"
+        >
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
       </template>
     </ListItems>
   </PanelTemplate>
@@ -83,24 +92,26 @@ export default {
     },
     addHandler () {
       this.mode = MODE.ADD
+
+      this.$refs.editInsurancePolice.openDialog()
     },
     editHandler (index) {
       this.mode = MODE.EDIT
 
-      this.initEditDialog(index)
+      this.initSelectedPolicy(index)
+      this.$refs.editInsurancePolice.openDialog()
     },
     removeHandler (index) {
       this.mode = MODE.REMOVE
 
-      this.initEditDialog(index)
+      this.initSelectedPolicy(index)
+      this.$refs.editInsurancePolice.openDialog()
     },
-    initEditDialog (index) {
+    initSelectedPolicy (index) {
       this.selectedPolicy = {
         ...this.insurancePolices[index],
         index
       }
-
-      this.$refs.editInsurancePolice.openDialog()
     },
     async initInsurancePolices () {
       this.isLoading = true

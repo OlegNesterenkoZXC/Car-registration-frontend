@@ -8,10 +8,27 @@ export const DUTIES_DESCRIPTION = {
   ISSUANCE_VEHICLE_PASSPORT: 'Выдача нового ПТС',
 }
 
+export const EDITOR_ROLE = 'EDITOR'
+
 export const MODE = {
   ADD: "ADD",
   EDIT: "EDIT",
   REMOVE: "REMOVE"
+}
+
+export const ALERT_TYPE = {
+  CONFIRM_TRANSACTION: {
+    type: 'info',
+    text: 'Подтвердите транзакцию в расширении браузера'
+  },
+  NO_PERMISSION: {
+    type: 'warning',
+    text: 'У этого аккаунта нет прав, выберите другой',
+  },
+  ACCOUNT_PERMISSION_ERROR: {
+    type: 'error',
+    text: 'Не удалось получить аккаунт',
+  }
 }
 
 export const BLOCKCHAIN_URL = 'http://127.0.0.1:8545'

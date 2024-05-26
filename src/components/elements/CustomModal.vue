@@ -4,21 +4,11 @@
     persistent
     width="500"
   >
-    <template v-slot:activator="{ on, attrs }">
+    <template 
+      v-if="!disabled" 
+      v-slot:activator="{ on, attrs }"
+    >
       <v-btn
-        v-if="isIconActivator"
-        fab
-        small
-        color="primary"
-        class="ma-4"
-        v-bind="attrs"
-        v-on="on"
-        @click="openHandler"
-      >
-        <v-icon>{{ iconActivator }}</v-icon>
-      </v-btn>
-      <v-btn
-        v-else
         color="primary"
         v-bind="attrs"
         v-on="on"
@@ -43,7 +33,7 @@
             @click="$emit('confirm')"
             text
           >
-            {{ confirmButton }}
+            {{ confirmButtonText }}
           </v-btn>
           <v-btn
             color="error"
@@ -71,19 +61,15 @@ export default {
       type: String,
       default: 'Открыть'
     },
-    isIconActivator: {
+    disabled: {
       type: Boolean,
       default: false
-    },
-    iconActivator: {
-      type: String,
-      default: 'mdi-plus'
     },
     title: {
       type: String,
       required: true
     },
-    confirmButton: {
+    confirmButtonText: {
       type: String,
       default: BUTTON_TEXT.confirm
     },

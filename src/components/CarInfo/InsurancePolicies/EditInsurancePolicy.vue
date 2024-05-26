@@ -1,13 +1,11 @@
 <template>
   <CustomModal
     ref="modal"
-    isIconActivator
+    disabled
     :loading="isLoading"
     :title="modalTitle"
-    :confirmButton="modalConfirmButton"
+    :confirmButtonText="modalConfirmButtonText"
     :disabledConfirmButton="modalDisabledConfirmButton"
-    @activator="activatorHandler"
-    @change="changeHandler"
     @confirm="confirmHandler"
   >
     <div v-if="metaMaskProvider">
@@ -21,23 +19,6 @@
           :type="alert.type"
         >
           {{ alert.text }}
-        </v-alert>
-        <v-alert
-          v-if="isLoading"
-          prominent
-          text
-          type="info"
-        >
-          Проверьте расширение
-        </v-alert>
-
-        <v-alert
-          v-if="error"
-          prominent
-          text
-          :type="error.type"
-        >
-          {{ error.text }}
         </v-alert>
 
         <v-form
@@ -83,12 +64,12 @@ import {
 
 import { encodeRole } from '@/libs/utils'
 
-import { MODE } from '@/constants';
+import { MODE, EDITOR_ROLE, ALERT_TYPE } from '@/constants';
 import { mapState } from 'vuex';
 
 const MODAL_TYPE_MAPPING = {
   [MODE.ADD]: {
-    title: 'Редактирование полиса',
+    title: 'Добавление полиса',
     confirmButton: 'Добавить',
     disabledForm: false,
   },
@@ -109,14 +90,18 @@ const MODAL_TYPE_MAPPING = {
   }
 }
 
-const ALERT_TYPE = {
-  STARTED_TRANSACTION: {
-    type: 'info',
-    text: 'Ожидайте исполнения транзакции'
-  },
-  NO_PERMISSION: {
+const POLICY_ALERT_MAPPING = {
+  [MODE.ADD]: {
     type: 'error',
-    text: 'Нет прав, выберите другой аккаунт',
+    text: 'Не удалось добавить полис страхования',
+  },
+  [MODE.EDIT]: {
+    type: 'error',
+    text: 'Не удалось изменить полис страхования',
+  },
+  [MODE.REMOVE]: {
+    type: 'error',
+    text: 'Не удалось удалить полис страхования',
   }
 }
 
@@ -152,7 +137,6 @@ export default {
         required: (v) => !!v || 'Номер обязательное поле',
         length: (v) => !v || v.length === 10 || 'Неправильная длина',
       },
-      error: null,
       alert: null
     }
   },
@@ -160,7 +144,7 @@ export default {
     addressSigner: {
       immediate: true,
       handler (value, oldValue) {
-        if (value !== oldValue) {
+        if (value && value !== oldValue) {
           this.refreshSigner()
         }
       }
@@ -187,7 +171,7 @@ export default {
     modalTitle () {
       return this.modalType.title
     },
-    modalConfirmButton () {
+    modalConfirmButtonText () {
       return this.modalType.confirmButton
     },
     modalDisabledConfirmButton () {
@@ -213,47 +197,6 @@ export default {
     }
   },
   methods: {
-    activatorHandler () {
-      this.$emit('add')
-    },
-    changeHandler (isOpen) {
-      this.$refs.form?.resetValidation()
-
-      const isFillingMode = this.mode === MODE.EDIT || this.mode === MODE.REMOVE
-
-      if (this.mode === MODE.ADD) {
-        this.series = ''
-        this.number = ''
-      }
-
-      if (isFillingMode && isOpen) {
-        this.series = this.insurancePolicy.series
-        this.number = this.insurancePolicy.number
-      }
-    },
-    openDialog () {
-      this.$refs.modal.openDialog()
-    },
-    async initMetMaskProvider () {
-      this.isLoading = true
-
-      if (this.$refs.connectMetaMask) {
-        await this.$refs.connectMetaMask.initMetMaskProvider()
-      }
-
-      this.isLoading = false
-    },
-    async hasRole () {
-      const params = {
-        address: this.contractAddress,
-        abi: this.abi,
-        provider: this.httpProvider,
-        signer: this.signer,
-        role: encodeRole('EDITOR')
-      }
-
-      return hasRoleAPI(params)
-    },
     confirmHandler () {
       if (!this.metaMaskProvider) {
         this.initMetMaskProvider()
@@ -263,16 +206,32 @@ export default {
 
       this.startEditData()
     },
+    openDialog () {
+      this.alert = null
+      this.$refs.modal.openDialog()
+
+      this.$nextTick(this.initFormData)      
+    },
+    initFormData () {
+      if (this.mode === MODE.ADD) {
+        this.$refs.form?.reset()
+      } else {
+        this.series = this.insurancePolicy.series
+        this.number = this.insurancePolicy.number
+      }
+    },
+    async initMetMaskProvider () {
+      this.isLoading = true
+      
+      await this.$refs.connectMetaMask?.initMetMaskProvider()
+
+      this.isLoading = false
+    },
     async refreshSigner () {
       try {
-        this.error = null
-
-        const hasRole = await this.hasRole()
+        const hasRole = await this.hasEditorRole()
         if(!hasRole) {
-          this.alert = {
-            type: 'error',
-            text: 'Нет прав, выберите другой аккаунт',
-          }
+          this.alert = ALERT_TYPE.NO_PERMISSION
 
           this.isEditor = false
 
@@ -281,29 +240,24 @@ export default {
 
         this.isEditor = true
       } catch (error) {
-        this.alert = {
-          type: 'error',
-          text: 'Не удалось получить аккаунт',
-        }
+        this.alert = ALERT_TYPE.ACCOUNT_PERMISSION_ERROR
       }
+
+      this.alert = null
     },
     async startEditData () {
       this.isLoading = true
       this.isDisabled = true
-      this.error = null
+      this.alert = null
 
       try {
+        this.alert = ALERT_TYPE.CONFIRM_TRANSACTION
+
         if (this.mode === MODE.ADD) {
           await this.addInsurancePolicy()
-        }
-        if (this.mode === MODE.EDIT) {
-          const tx = this.editInsurancePolicy()
-          console.log('ТРАНЗАКЦИЯ НАЧАТА')
-
-          await tx
-          console.log('ТРАНЗАКЦИЯ ИСПОЛНЕНА');
-        }
-        if (this.mode === MODE.REMOVE) {
+        } else if (this.mode === MODE.EDIT) {
+          await this.editInsurancePolicy()
+        } else if (this.mode === MODE.REMOVE) {
           await this.removeInsurancePolicy()
         }
 
@@ -311,19 +265,22 @@ export default {
       } catch (error) {
         console.error(error)
 
-        this.alert = {
-          type: 'error',
-          text: 'Не удалось изменить полис страхования',
-        }
-
-        this.error = {
-          type: 'error',
-          text: 'Не удалось изменить полис страхования',
-        }
+        this.alert = POLICY_ALERT_MAPPING[this.mode]
       } finally {
         this.isLoading = false
         this.isDisabled = false
       }
+    },
+    async hasEditorRole () {
+      const params = {
+        address: this.contractAddress,
+        abi: this.abi,
+        provider: this.httpProvider,
+        signer: this.signer,
+        role: encodeRole(EDITOR_ROLE)
+      }
+
+      return hasRoleAPI(params)
     },
     async addInsurancePolicy () {
       const params = {
