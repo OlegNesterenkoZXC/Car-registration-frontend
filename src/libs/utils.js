@@ -6,9 +6,9 @@ export function formatDate (date) {
   const days = date.getDate()
   let daysString = ''
   if(days < 10) {
-    daysString = `0${days + 1}`
+    daysString = `0${days}`
   } else {
-    daysString = `${days + 1}`
+    daysString = `${days}`
   }
 
   const months = date.getMonth()

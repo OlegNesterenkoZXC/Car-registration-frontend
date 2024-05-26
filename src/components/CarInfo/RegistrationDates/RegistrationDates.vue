@@ -11,6 +11,13 @@
       @remove="removeHandler"
     >
       <template #actions>
+        <EditRegistrationDate
+          ref="editRegistrationDate"
+          :registrationDate="selectedDate"
+          :mode="mode"
+          :vin="vin"
+          @success="refreshData"
+        />
         <v-btn
           fab
           small
@@ -26,17 +33,20 @@
 </template>
 
 <script>
-import ListItems from '@/components/elements/ListItems.vue';
+import ListItems from '@/components/elements/ListItems.vue'
 import PanelTemplate from '@/components/elements/PanelTemplate.vue'
+import EditRegistrationDate from './EditRegistrationDate.vue'
 
 import { getRegistrationDates as getRegistrationDatesAPI } from '@/libs/api'
+
+import { MODE } from '@/constants'
 
 import { formatDate } from '@/libs/utils'
 
 import { mapState } from 'vuex';
 
 export default {
-  components: { PanelTemplate, ListItems },
+  components: { PanelTemplate, ListItems, EditRegistrationDate },
   props: {
     vin: {
       type: String,
@@ -46,6 +56,8 @@ export default {
   data () {
     return {
       isLoading: true,
+      mode: MODE.ADD,
+      selectedDate: undefined,
       registrationsDates: [],
       error: null,
     }
@@ -58,16 +70,22 @@ export default {
     }),
     registrationDatesListItems () {
       return this.registrationsDates.map((registrationDates) => {
-        const items = []
+        const listItems = []
 
         if (registrationDates.start) {
-          items.push(`С: ${registrationDates.start}`)
+          listItems.push(`С: ${registrationDates.start}`)
         }
         if (registrationDates.end) {
-          items.push(`По: ${registrationDates.end}`)
+          listItems.push(`По: ${registrationDates.end}`)
+        }
+
+        const item = {
+          subtitles: listItems,
+          editable: true,
+          removable: true
         }
         
-        return { subtitles: items }
+        return item
       })
     }
   },
@@ -76,13 +94,34 @@ export default {
       this.initRegistrationDates()
     },
     addHandler () {
-      console.log('add event');
+      this.mode = MODE.ADD
+
+      this.$refs.editRegistrationDate.openDialog()
     },
     editHandler (index) {
-      console.log('edit event', index);
+      this.mode = MODE.EDIT
+
+      this.initSelectedDate(index)
+
+      this.$refs.editRegistrationDate.openDialog()
     },
     removeHandler (index) {
-      console.log('remove event', index);
+      this.mode = MODE.REMOVE
+
+      this.initSelectedDate(index)
+
+      this.$refs.editRegistrationDate.openDialog()
+    },
+    initSelectedDate (index) {
+      this.selectedDate = {
+        ...this.registrationsDates[index],
+        index
+      }
+    },
+    refreshData () {
+      this.registrationsDates = []
+
+      this.init ()
     },
     async initRegistrationDates () {
       this.isLoading = true
@@ -110,11 +149,15 @@ export default {
           const start = registrationDate?.[0];
           if (start && Number(start) !== 0) {
             date.start = formatDate(new Date(Number(start) * 1000))
+          } else {
+            date.start = ''
           }
 
           const end = registrationDate?.[1];
           if (end && Number(end) !== 0) {
             date.end = formatDate(new Date(Number(end) * 1000))
+          } else {
+            date.end = ''
           }
 
           this.registrationsDates.push(date)
