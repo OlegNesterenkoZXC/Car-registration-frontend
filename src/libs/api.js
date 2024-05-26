@@ -224,3 +224,61 @@ export async function removeInsurancePolicy (params) {
   
   return tx.wait()
 }
+
+export async function addVehiclePassport (params) {
+  const {
+    address,
+    abi,
+    provider,
+    signer,
+    vin,
+    region,
+    series,
+    number
+  } = params
+
+  console.log(params);
+  
+  const contract = new Contract(address, abi, provider)
+  
+  const tx = await contract.connect(signer).addVehiclePassport(vin, [region, series, number])
+  
+  return tx.wait()
+}
+
+export async function editVehiclePassport (params) {
+  const {
+    address,
+    abi,
+    provider,
+    signer,
+    vin,
+    index,
+    region,
+    series,
+    number
+  } = params
+  
+  const contract = new Contract(address, abi, provider)
+  
+  const tx = await contract.connect(signer).editVehiclePassport(vin, index, [region, series, number])
+
+  return tx.wait()
+}
+
+export async function removeVehiclePassport (params) {
+  const {
+    address,
+    abi,
+    provider,
+    signer,
+    vin,
+    index
+  } = params
+  
+  const contract = new Contract(address, abi, provider)
+  
+  const tx = await contract.connect(signer).removeVehiclePassport(vin, index)
+  
+  return tx.wait()
+}

@@ -20,6 +20,14 @@
         >
           <v-icon>mdi-plus</v-icon>
         </v-btn>
+
+        <EditVehiclePassport
+          ref="editVehiclePassport"
+          :mode="mode"
+          :vin="vin"
+          :vehiclePassport="selectedVehiclePassport"
+          @success="refreshData"
+        />
       </template>
     </ListItems>
   </PanelTemplate>
@@ -28,12 +36,14 @@
 <script>
 import ListItems from '@/components/elements/ListItems.vue'
 import PanelTemplate from '@/components/elements/PanelTemplate.vue'
+import EditVehiclePassport from '@/components/CarInfo/VehiclePassports/EditVehiclePassport.vue';
 
 import { mapState } from 'vuex';
 import { getVehiclePassports as getVehiclePassportsAPI } from '@/libs/api'
+import { MODE } from '@/constants';
 
 export default {
-  components: { PanelTemplate, ListItems },
+  components: { PanelTemplate, ListItems, EditVehiclePassport },
   props: {
     vin: {
       type: String,
@@ -43,7 +53,9 @@ export default {
   data () {
     return {
       isLoading: true,
+      mode: MODE.ADD,
       vehiclePassports: [],
+      selectedVehiclePassport: null,
       error: null,
     }
   },
@@ -75,14 +87,35 @@ export default {
     init () {
       this.initVehiclePassports()
     },
+    refreshData () {
+      this.vehiclePassports = []
+
+      this.init()
+    },
     addHandler () {
-      console.log('add event');
+      this.mode = MODE.ADD
+
+      this.$refs.editVehiclePassport.openDialog()
     },
     editHandler (index) {
-      console.log('edit event', index);
+      this.mode = MODE.EDIT
+      
+      this.setSelectedPassport(index)
+      
+      this.$refs.editVehiclePassport.openDialog()
     },
     removeHandler (index) {
-      console.log('remove event', index);
+      this.mode = MODE.REMOVE
+
+      this.setSelectedPassport(index)
+
+      this.$refs.editVehiclePassport.openDialog()
+    },
+    setSelectedPassport (index) {
+      this.selectedVehiclePassport = {
+        ...this.vehiclePassports[index],
+        index
+      }
     },
     async initVehiclePassports () {
       this.isLoading = true
