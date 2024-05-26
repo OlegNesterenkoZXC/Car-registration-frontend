@@ -169,6 +169,7 @@ export default {
   },
   methods: {
     openDialog () {
+      this.alert = null
       this.$refs.editTemplatePanel.openDialog()
 
       this.$nextTick(this.initFormData)
