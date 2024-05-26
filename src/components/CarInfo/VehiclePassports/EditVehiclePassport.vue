@@ -135,7 +135,6 @@ export default {
   },
   computed: {
     ...mapState({
-      metaMaskProvider: 'metaMaskProvider',
       signer: 'signer',
       httpProvider: 'httpProvider',
       abi: 'abi',

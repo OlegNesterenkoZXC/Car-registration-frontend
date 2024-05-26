@@ -48,7 +48,7 @@ import {
   removeInsurancePolicy as removeInsurancePolicyAPI,
 } from '@/libs/api'
 
-import { MODE, EDITOR_ROLE, ALERT_TYPE } from '@/constants';
+import { MODE, ALERT_TYPE } from '@/constants';
 import { mapState } from 'vuex';
 
 const MODAL_TYPE_MAPPING = {
@@ -123,7 +123,6 @@ export default {
   },
   computed: {
     ...mapState({
-      metaMaskProvider: 'metaMaskProvider',
       signer: 'signer',
       httpProvider: 'httpProvider',
       abi: 'abi',

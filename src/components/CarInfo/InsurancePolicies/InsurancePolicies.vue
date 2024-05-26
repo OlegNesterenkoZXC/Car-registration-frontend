@@ -16,7 +16,6 @@
           :insurancePolicy="selectedPolicy"
           :mode="mode"
           :vin="vin"
-          @add="addHandler"
           @success="refreshData"
         />
         <v-btn
