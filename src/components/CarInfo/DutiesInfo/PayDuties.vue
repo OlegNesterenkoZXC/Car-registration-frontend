@@ -1,9 +1,9 @@
 <template>
   <CustomModal 
+    modalButtonName="Оплатить"
     :title="modalTitle"
     :loading="isLoading"
-    modalButtonName="Оплатить"
-    :confirmButton="modalConfirmButton"
+    :confirmButtonText="modalConfirmButton"
     @confirm="confirmHandler"
   >
     <div v-if="metaMaskProvider">
@@ -12,21 +12,12 @@
       
       <v-card-text>
         <v-alert
-          v-if="error"
+          v-if="alert"
           prominent
           text
-          :type="error.type"
+          :type="alert.type"
         >
-          {{ error.text }}
-        </v-alert>
-
-        <v-alert
-          v-if="isLoading"
-          prominent
-          text
-          type="info"
-        >
-          Проверьте расширение
+          {{ alert.text }}
         </v-alert>
       </v-card-text>
     </div>
@@ -39,13 +30,29 @@
 </template>
 
 <script>
-import { payCarDuties as payCarDutiesAPI } from '@/libs/api'
-
 import ConnectMetaMask from '@/components/ConnectMetaMask.vue'
 import CustomModal from '@/components/elements/CustomModal.vue'
 
-import { parseEther } from 'ethers'
+import { payCarDuties as payCarDutiesAPI } from '@/libs/api'
+import { parseEther } from '@/libs/utils';
+import { ALERT_TYPE } from '@/constants';
 import { mapState } from 'vuex';
+
+const MODAL_TYPE = {
+  PAY_DUTIES: {
+    title: 'Оплата пошлин',
+    confirmButton: 'Оплатить',
+  },
+  CONNECT_METAMASK: {
+    title: 'Подключение к MetaMask',
+    confirmButton: 'Подключиться',
+  }
+}
+
+const PAY_DUTIES_ERROR_ALERT = {
+  type: 'error',
+  text: 'Не удалось оплатить пошлины, попробуйте ещё раз'
+}
 
 export default {
   components: { ConnectMetaMask, CustomModal },
@@ -63,7 +70,7 @@ export default {
     return {
       isLoading: false,
       dialog: false,
-      error: null,
+      alert: null,
     }
   },
   computed: {
@@ -73,19 +80,14 @@ export default {
       metaMaskProvider: 'metaMaskProvider',
       signer: 'signer'
     }),
+    modalType () {
+      return this.metaMaskProvider ? MODAL_TYPE.PAY_DUTIES : MODAL_TYPE.CONNECT_METAMASK
+    },
     modalTitle () {
-      if (!this.metaMaskProvider) {
-        return 'Подключение к MetaMask'
-      }
-      
-      return 'Оплата'
+      return this.modalType.title
     },
     modalConfirmButton () {
-      if (!this.metaMaskProvider) {
-        return 'Подключиться'
-      }
-
-      return 'Оплатить'
+      return this.modalType.confirmButton
     }
   },
   methods: {
@@ -107,9 +109,6 @@ export default {
 
       this.payDuties()
     },
-    async refreshSigner () {
-      this.signer = await this.metaMaskProvider.getSigner()
-    },
     async payCarDuties () {
       const params = {
         address: this.contractAddress,
@@ -124,7 +123,7 @@ export default {
     },
     async payDuties () {
       this.isLoading = true
-      this.error = false
+      this.alert = ALERT_TYPE.CONFIRM_TRANSACTION
 
       try {
         await this.payCarDuties()
@@ -133,10 +132,7 @@ export default {
       } catch (error) {
         console.error(error);
 
-        this.error = {
-          type: 'error',
-          text: 'Что-то пошло не так, попробуйте ещё раз'
-        }
+        this.alert = PAY_DUTIES_ERROR_ALERT
       } finally {
         this.isLoading = false
       }

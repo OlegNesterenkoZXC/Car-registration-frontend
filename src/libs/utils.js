@@ -1,4 +1,11 @@
-import { JsonRpcProvider, BrowserProvider, toUtf8Bytes, keccak256, formatEther as formatEtherLIB } from "ethers";
+import { 
+  JsonRpcProvider, 
+  BrowserProvider,
+  toUtf8Bytes, 
+  keccak256, 
+  formatEther as formatEtherLIB,
+  parseEther as parseEtherLIB
+} from "ethers";
 
 import { BLOCKCHAIN_URL } from "@/constants";
 
@@ -20,6 +27,10 @@ export function formatDate (date) {
   }
 
   return `${daysString}.${monthsString}.${date.getFullYear()}`
+}
+
+export function parseEther (value) {
+  return parseEtherLIB(value)
 }
 
 export function formatEther (value) {

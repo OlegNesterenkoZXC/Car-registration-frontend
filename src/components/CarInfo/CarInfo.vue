@@ -41,7 +41,6 @@ export default {
   data () {
     return {
       isLoading: true,
-      carInfo: null,
       error: null
     }
   },
