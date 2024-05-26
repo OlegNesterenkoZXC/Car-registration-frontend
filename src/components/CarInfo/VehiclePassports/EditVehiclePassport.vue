@@ -1,5 +1,5 @@
 <template>
-  <EditTemplatePanel
+  <EditPanelTemplate
     ref="editTemplatePanel"
     v-model="isEditor"
     :loading="isLoading"
@@ -42,11 +42,11 @@
         :rules="numberRules"
       />
     </v-form>
-  </EditTemplatePanel>
+  </EditPanelTemplate>
 </template>
 
 <script>
-import EditTemplatePanel from '@/components/CarInfo/EditTemplatePanel.vue'
+import EditPanelTemplate from '@/components/CarInfo/EditPanelTemplate.vue'
 
 import {
   addVehiclePassport as addVehiclePassportAPI,
@@ -105,7 +105,7 @@ const NUMBER_RULES = {
 }
 
 export default {
-  components: { EditTemplatePanel },
+  components: { EditPanelTemplate },
   props: {
     mode: {
       type: String,
