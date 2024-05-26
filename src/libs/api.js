@@ -237,8 +237,6 @@ export async function addVehiclePassport (params) {
     number
   } = params
 
-  console.log(params);
-  
   const contract = new Contract(address, abi, provider)
   
   const tx = await contract.connect(signer).addVehiclePassport(vin, [region, series, number])
@@ -293,8 +291,6 @@ export async function addRegistrationDate (params) {
     start,
     end,
   } = params
-
-  console.log(params);
   
   const contract = new Contract(address, abi, provider)
   
@@ -335,6 +331,53 @@ export async function removeRegistrationDate (params) {
   const contract = new Contract(address, abi, provider)
   
   const tx = await contract.connect(signer).removeRegistrationDate(vin, index)
+  
+  return tx.wait()
+}
+
+
+export async function getDutiesList (params) {
+  const {
+    address,
+    abi,
+    provider,
+  } = params
+
+  const contract = new Contract(address, abi, provider)
+
+  return contract.getDutiesList()
+}
+
+export async function addCarDuty (params) {
+  const {
+    address,
+    abi,
+    provider,
+    signer,
+    vin,
+    duty
+  } = params
+  
+  const contract = new Contract(address, abi, provider)
+  
+  const tx = await contract.connect(signer).addCarDuty(vin, duty)
+  
+  return tx.wait()
+}
+
+export async function removeCarDuty (params) {
+  const {
+    address,
+    abi,
+    provider,
+    signer,
+    vin,
+    duty
+  } = params
+  
+  const contract = new Contract(address, abi, provider)
+  
+  const tx = await contract.connect(signer).removeCarDuty(vin, duty)
   
   return tx.wait()
 }

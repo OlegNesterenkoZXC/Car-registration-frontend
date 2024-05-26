@@ -1,13 +1,11 @@
 <template>
-  <PanelTemplate 
-    v-if="true"
+  <PanelTemplate
     title="Пошлины"
     :error="error"
     :loading="isLoading"
   >
     <ListItems
       :items="dutiesListItems"
-      @edit="editHandler"
       @remove="removeHandler"
     >
       <template #actions>
@@ -17,6 +15,17 @@
           :vin="vin"
           @success="refreshData" 
         />
+
+        <EditCarDuty
+          ref="editCarDuty"
+          :mode="mode"
+          :vin="vin"
+          :selectedDuty="selectedDuty"
+          :dutyList="dutiesList"
+          :assignedDuties="assignedDuties"
+          @success="refreshData"
+        />
+
         <v-btn
           fab
           small
@@ -43,22 +52,24 @@
 </template>
 
 <script>
+import PayDuties from '@/components/CarInfo/DutiesInfo/PayDuties.vue'
+import PanelTemplate from '@/components/elements/PanelTemplate.vue'
+import ListItems from '@/components/elements/ListItems.vue'
+import EditCarDuty from '@/components/CarInfo/DutiesInfo/EditCarDuty.vue'
+
 import { 
+  getDutiesList as getDutiesListAPI,
   getCarDuties as getCarDutiesAPI, 
   getAmountDuty as getAmountDutyAPI, 
   getTotalAmountDuties as getTotalAmountAPI 
 } from '@/libs/api'
 
 import { formatEther } from '@/libs/utils'
-import { DUTIES_DESCRIPTION } from '@/constants'
+import { DUTIES_DESCRIPTION, MODE } from '@/constants'
 import { mapState } from 'vuex'
 
-import PayDuties from '@/components/CarInfo/DutiesInfo/PayDuties.vue'
-import PanelTemplate from '@/components/elements/PanelTemplate.vue'
-import ListItems from '@/components/elements/ListItems.vue'
-
 export default {
-  components: { PayDuties, PanelTemplate, ListItems },
+  components: { PayDuties, PanelTemplate, ListItems, EditCarDuty },
   props: {
     vin: {
       type: String,
@@ -67,10 +78,13 @@ export default {
   },
   data () {
     return {
+      isLoading: true,
+      mode: MODE.ADD,
+      selectedDuty: null,
+      dutiesList: [],
       duties: [],
       totalAmount: 0,
       error: null,
-      isLoading: true
     }
   },
   computed: {
@@ -79,11 +93,14 @@ export default {
       abi: 'abi',
       contractAddress: 'contractAddress'
     }),
+    assignedDuties () {
+      return this.duties.map(duty => duty.name)
+    },
     dutiesListItems () {
       const duties = this.duties.map((duty) => {
         const item = {} 
         if (duty.name) {
-          item.title = duty.name
+          item.title = DUTIES_DESCRIPTION[duty.name]
         }
 
         item.subtitles = (duty.amount ? [`${duty.amount} eth`] : [])
@@ -104,6 +121,17 @@ export default {
     }
   },
   methods: {
+    addHandler () {
+      this.mode = MODE.ADD
+
+      this.$refs.editCarDuty.openDialog()
+    },
+    removeHandler (index) {
+      this.mode = MODE.REMOVE
+
+      this.selectedDuty = this.duties[index].name
+      this.$refs.editCarDuty.openDialog()
+    },
     async init () {
       this.isLoading = true
       this.error = null
@@ -111,7 +139,8 @@ export default {
       try {
         await Promise.all([
           this.initDuties(),
-          this.initTotalAmount()
+          this.initTotalAmount(),
+          this.initDutiesList()
         ])
       } catch (error) {
         console.error(error)
@@ -123,15 +152,6 @@ export default {
       } finally {
         this.isLoading = false
       }
-    },
-    addHandler () {
-      console.log('add event');
-    },
-    editHandler (index) {
-      console.log('edit event', index);
-    },
-    removeHandler (index) {
-      console.log('remove event', index);
     },
     refreshData () {
       this.duties = []
@@ -153,10 +173,13 @@ export default {
       const amount = await this.getAmountDuty(duty)
 
       this.duties.push({
-        name: DUTIES_DESCRIPTION[duty],
+        name: duty,
         amount
       })
     },
+    async initDutiesList () {
+      this.dutiesList = await this.getDutiesList()
+    }, 
     async getDuties () {
       const params = {
         address: this.contractAddress,
@@ -190,6 +213,15 @@ export default {
 
       return formatEther(totalAmount)
     },
+    async getDutiesList () {
+      const params = {
+        address: this.contractAddress,
+        abi: this.abi,
+        provider: this.httpProvider
+      }
+
+      return getDutiesListAPI(params)
+    }
   },
   created () {
     this.init()

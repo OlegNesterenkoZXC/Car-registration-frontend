@@ -122,12 +122,6 @@ export default {
     isDisabledModal () {
       return !this.isEditor || !this.isSelectedDate
     },
-    seriesRules () {
-      return [SERIES_RULES.required, SERIES_RULES.length]
-    },
-    numberRules () {
-      return [NUMBER_RULES.required, NUMBER_RULES.length]
-    },
     isSelectedDate () {
       return this.formRegistrationDate.start || this.formRegistrationDate.end
     }
