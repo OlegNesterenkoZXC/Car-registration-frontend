@@ -1,5 +1,6 @@
 <template>
   <CarCard
+    title="Информация о транспортном средстве"
     :vin="vin"
     :loading="isLoading"
     :error="error"

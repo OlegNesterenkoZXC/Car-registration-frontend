@@ -7,7 +7,7 @@
     @confirm="confirmHandler"
   >
     <div v-if="metaMaskProvider">
-      <v-card-text>Ваш счёт: {{ signer.address }}</v-card-text>
+      <v-card-text>Ваш аккаунт: {{ signer.address }}</v-card-text>
       <v-card-text>К оплате: {{ amount }} eth</v-card-text>
       
       <v-card-text>

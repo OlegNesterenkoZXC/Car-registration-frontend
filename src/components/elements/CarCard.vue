@@ -3,7 +3,7 @@
     <v-row>
       <v-col>
         <v-card :loading="loading">
-          <v-card-title>Информация об автомобиле</v-card-title>
+          <v-card-title>{{ title }}</v-card-title>
           <v-card-subtitle>VIN: {{ vin }}</v-card-subtitle>
           <v-card-text v-if="!loading">
             <v-card>
@@ -36,6 +36,10 @@ export default {
     vin: {
       type: String,
       required: true,
+    },
+    title: {
+      type: String,
+      required: true
     },
     loading: {
       type: Boolean,
