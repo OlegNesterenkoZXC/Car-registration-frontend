@@ -107,7 +107,6 @@ export default {
         return {
           name: DUTIES_DESCRIPTION[duty],
           code: duty,
-          disabled: true
         }
       }
 

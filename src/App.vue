@@ -11,23 +11,24 @@
         />
       </v-overlay>
 
-      <v-container v-else-if="error" >
+      <v-container v-else-if="alert" fluid>
         <v-alert 
           prominent
-          text v-if="error" 
-          :type="error.type" 
+          text
+          :type="alert.type" 
         >
           <v-row>
-            <v-col cols="11">
-              {{ error.text }}
-            </v-col>
-
+            <v-col cols="11">{{ alert.text }}</v-col>
             <v-col cols="1">
               <v-btn
                 icon
                 @click="clickHandler"
               >
-                <v-icon>mdi-cached</v-icon>
+                <v-icon
+                  color="error"
+                >
+                  mdi-cached
+                </v-icon>
               </v-btn>
             </v-col>
           </v-row>
@@ -55,7 +56,7 @@ export default {
   data: () => {
     return {
       isLoading: true,
-      error: null,
+      alert: null,
     }
   },
   methods: {
@@ -91,7 +92,7 @@ export default {
       } catch (error) {
         console.error(error)
 
-        this.error = {
+        this.alert = {
           type: 'error',
           text: 'Не удалось получить информацию о контракте'
         }
@@ -105,7 +106,7 @@ export default {
       } catch (error) {
         console.error(error);
 
-        this.error = {
+        this.alert = {
           type: 'error',
           text: 'Не удалось подключиться к Ethereum'
         }

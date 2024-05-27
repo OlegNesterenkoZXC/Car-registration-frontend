@@ -27,9 +27,6 @@
 </template>
 
 <script>
-import ListItems from '@/components/elements/ListItems.vue'
-import ListMenu from '@/components/elements/ListMenu.vue'
-
 export default {
   components: { ListMenu, ListItems },
   props: {

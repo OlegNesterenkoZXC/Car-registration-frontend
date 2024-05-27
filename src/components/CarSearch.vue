@@ -1,48 +1,65 @@
 <template>
-  <v-container>
-    <v-form 
-      ref="form" 
-      v-model="isValidForm"
+  <v-container fill-height fluid>
+    <v-row 
+      justify="center"
     >
-      <v-row>
-        <v-col cols="8">
-          <v-text-field
-            counter="17"
-            hint="VIN"
-            persistent-hint
-            clearable
-            outlined
-            solo
-            :rules="[textFieldRules.required, textFieldRules.length, textFieldRules.vin]"
-            :disabled="isLoading"
-            v-model="vinNumber"
-          />
-        </v-col>
-        <v-col cols="4">
-          <v-btn
-            color="primary"
-            x-large
-            :loading="isLoading"
-            :disabled="isLoading || !isValidForm"
-            @click="findHandler"
-          >
-            Найти
-          </v-btn>
-        </v-col>
-        <v-col
-          v-if="error"
-          cols="8"
+      <v-col 
+        xs="12" 
+        sm="10"
+        md="6"
+        lg="4" 
+      >
+        <v-card
+          :loading="isLoading"
         >
-          <v-alert
-            text
-            prominent
-            :type="error.type"
-          >
-            {{ error.text }}
-          </v-alert>
-        </v-col>
-      </v-row>
-    </v-form>
+          <v-card-title>Поиск по VIN</v-card-title>
+          <v-card-text>
+            <v-alert
+              v-if="alert"
+              text
+              :type="alert.type"
+            >
+              {{ alert.text }}
+            </v-alert>
+            <v-form 
+              ref="form" 
+              v-model="isValidForm"
+              :disabled="isLoading"
+              @submit.prevent="submitHandler"
+            >
+              <v-text-field
+                v-model="formVin"
+                counter="17"
+                label="VIN"
+                clearable
+                :rules="textFieldRules"
+              />
+            </v-form>
+          </v-card-text>
+
+          <v-divider />
+
+          <v-card-actions>
+            <v-btn
+              color="primary"
+              text
+              :loading="isLoading"
+              :disabled="isLoading || !isValidForm"
+              @click="submitHandler"
+            >
+              Найти
+            </v-btn>
+            <v-btn
+              text
+              color="error"
+              @click="$refs.form.reset()"
+            >
+              Сбросить
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-col>
+    </v-row>  
   </v-container>
 </template>
 
@@ -52,18 +69,19 @@ import { VIN_REGEXP } from '@/constants'
 
 import { mapState } from 'vuex';
 
+const VIN_RULES = {
+  required: (v) => !!v || 'VIN обязательное поле',
+  length: (v) => !v || v.length === 17 || 'Неправильная длина',
+  isVin: (v) => VIN_REGEXP.test(v) || 'Неправильный формат VIN',
+}
+
 export default {
   data() {
     return {
       isValidForm: false,
       isLoading: false,
-      vinNumber: '',
-      error: null,
-      textFieldRules: {
-        required: (v) => !!v || 'VIN обязательное поле',
-        length: (v) => !v || v.length === 17 || 'Неправильная длина',
-        vin: (v) => VIN_REGEXP.test(v) || 'Неправильный формат VIN',
-      },
+      formVin: '',
+      alert: null,
     }
   },
   computed: {
@@ -72,13 +90,18 @@ export default {
       abi: 'abi',
       contractAddress: 'contractAddress'
     }),
+    textFieldRules () {
+      return [VIN_RULES.required, VIN_RULES.length, VIN_RULES.isVin]
+    },
     vin () {
-      return this.vinNumber.toUpperCase()
+      return this.formVin?.toUpperCase()
     }
   },
   methods: {
-    findHandler () {
-      this.toCarInfo()
+    submitHandler () {
+      if(this.$refs.form.validate()) {
+        this.toCarInfo()
+      }
     },
     async isExistCar () {
       const params = {
@@ -91,17 +114,13 @@ export default {
       return isExistCarAPI(params)
     },
     async toCarInfo () {
-      if(!this.$refs.form.validate()) {
-        return
-      }
-
       this.isLoading = true
 
       try {
         const isExistsCar = await this.isExistCar()
 
         if (!isExistsCar) {
-          this.error = {
+          this.alert = {
             type: 'info',
             text: 'Не найдено записей по этому VIN',
           }
@@ -115,7 +134,7 @@ export default {
       } catch (error) {
         console.error(error)
 
-        this.error = {
+        this.alert = {
           type: 'error',
           text: 'Не удалось получить запись',
         }
