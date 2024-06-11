@@ -28,7 +28,6 @@
 
 <script>
 export default {
-  components: { ListMenu, ListItems },
   props: {
     title: {
       type: String,
